@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // $middleware->trustProxies(at: '*');
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->web(append: [
@@ -27,6 +28,13 @@ return Application::configure(basePath: dirname(__DIR__))
             'is_admin' => \App\Http\Middleware\EnsureIsAdmin::class,
             'is_user' => \App\Http\Middleware\EnsureIsUser::class,
         ]);
+
+        $middleware->redirectUsersTo(function () {
+            if (auth()->check() && auth()->user()->role === 'admin') {
+                return '/admin/dashboard';
+            }
+            return '/dashboard';
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -1,5 +1,13 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import {
+    ArrowRightLeft,
+    BookOpen,
+    FolderGit2,
+    LayoutGrid,
+    Tags,
+    Users,
+    Wallet,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -13,16 +21,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
-
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-];
 
 const footerNavItems: NavItem[] = [
     {
@@ -37,7 +36,48 @@ const footerNavItems: NavItem[] = [
     },
 ];
 
+const adminNavItems: NavItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/admin/dashboard',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'User Management',
+        href: '/admin/users',
+        icon: Users,
+    },
+];
+
+const userNavItems: NavItem[] = [
+    {
+        title: 'Dashboard',
+        href: '/dashboard',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Wallets',
+        href: '/wallets',
+        icon: Wallet,
+    },
+    {
+        title: 'Categories',
+        href: '/categories',
+        icon: Tags,
+    },
+    {
+        title: 'Transactions',
+        href: '/transactions',
+        icon: ArrowRightLeft,
+    },
+];
+
 export function AppSidebar() {
+    const { auth } = usePage().props as any;
+
+    const mainNavItems =
+        auth.user?.role === 'admin' ? adminNavItems : userNavItems;
+
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

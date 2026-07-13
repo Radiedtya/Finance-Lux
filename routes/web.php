@@ -1,6 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Controllers\User\WalletController;
+use App\Http\Controllers\User\CategoryController;
+use App\Http\Controllers\User\TransactionController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -13,13 +18,17 @@ Route::any('/register', function () {
 });
 
 Route::middleware(['auth', 'verified', 'is_user'])->group(function () {
-    // URL: /dashboard -> Mengarah ke komponen Pages/dashboard.jsx
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
+
+    Route::resource('wallets', WalletController::class);
+    Route::resource('categories', CategoryController::class);
+    Route::resource('transactions', TransactionController::class);
 });
 
 Route::prefix('admin')->middleware(['auth', 'verified', 'is_admin'])->group(function () {
-    // URL: /admin/dashboard -> Mengarah ke komponen Pages/Admin/Dashboard.jsx
-    Route::inertia('dashboard', 'Admin/Dashboard')->name('admin.dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+    Route::resource('users', UserController::class)->only(['index', 'update']);
 });
 
 require __DIR__.'/settings.php';
