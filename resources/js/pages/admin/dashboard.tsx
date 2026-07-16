@@ -379,3 +379,12 @@ export default function AdminDashboard() {
         </SidebarInset>
     );
 }
+
+AdminDashboard.layout = {
+    breadcrumbs: [
+        {
+            title: 'Admin | Dashboard',
+            href: '/admin/dashboard',
+        },
+    ],
+};

@@ -3,56 +3,68 @@
 namespace App\Observers;
 
 use App\Models\Transaction;
+use App\Models\Wallet;
 
 class TransactionObserver
 {
-    /**
-     * Handle the Transaction "created" event.
-     */
+    private ?array $originalState = null;
+
+    public function creating(Transaction $transaction): void
+    {
+        //
+    }
+
     public function created(Transaction $transaction): void
     {
-        // 1. Ambil data dompet yang bersangkutan
-        $wallet = $transaction->wallet;
-
-        // 2. Jalankan logika matematika berdasarkan tipe transaksi
-        if ($transaction->type === 'income') {
-            // Jika pemasukan, tambah saldo dompet
-            $wallet->increment('balance', $transaction->amount);
-        } elseif ($transaction->type === 'expense') {
-            // Jika pengeluaran, kurangi saldo dompet
-            $wallet->decrement('balance', $transaction->amount);
-        }
+        $this->applyEffect($transaction->wallet_id, $transaction->type, $transaction->amount, 1);
     }
 
-    /**
-     * Handle the Transaction "updated" event.
-     */
+    public function updating(Transaction $transaction): void
+    {
+        $this->originalState = [
+            'wallet_id' => $transaction->getOriginal('wallet_id'),
+            'type' => $transaction->getOriginal('type'),
+            'amount' => $transaction->getOriginal('amount'),
+        ];
+    }
+
     public function updated(Transaction $transaction): void
     {
-        //
+        if ($this->originalState === null) {
+            return;
+        }
+
+        $this->applyEffect(
+            $this->originalState['wallet_id'],
+            $this->originalState['type'],
+            $this->originalState['amount'],
+            -1,
+        );
+
+        $this->applyEffect($transaction->wallet_id, $transaction->type, $transaction->amount, 1);
+
+        $this->originalState = null;
     }
 
-    /**
-     * Handle the Transaction "deleted" event.
-     */
     public function deleted(Transaction $transaction): void
     {
-        //
+        $this->applyEffect($transaction->wallet_id, $transaction->type, $transaction->amount, -1);
     }
 
-    /**
-     * Handle the Transaction "restored" event.
-     */
     public function restored(Transaction $transaction): void
     {
-        //
+        $this->applyEffect($transaction->wallet_id, $transaction->type, $transaction->amount, 1);
     }
 
-    /**
-     * Handle the Transaction "force deleted" event.
-     */
     public function forceDeleted(Transaction $transaction): void
     {
         //
+    }
+
+    private function applyEffect(int $walletId, string $type, float $amount, int $direction): void
+    {
+        $signedAmount = $type === 'income' ? $amount * $direction : -$amount * $direction;
+
+        Wallet::where('id', $walletId)->increment('balance', $signedAmount);
     }
 }

@@ -36,20 +36,20 @@ class CategoryController extends Controller
         return redirect()->back()->with('success', 'Kategori berhasil ditambahkan!');
     }
 
-    public function update(Request $request, Category $category)
-    {
-        abort_if($category->user_id !== auth()->id(), 403);
+    // public function update(Request $request, Category $category)
+    // {
+    //     abort_if($category->user_id !== auth()->id(), 403);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'type' => 'required|in:income,expense',
-            'color' => 'required|string|max:7',
-        ]);
+    //     $validated = $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'type' => 'required|in:income,expense',
+    //         'color' => 'required|string|max:7',
+    //     ]);
 
-        $category->update($validated);
+    //     $category->update($validated);
 
-        return redirect()->back()->with('success', 'Kategori berhasil diperbarui!');
-    }
+    //     return redirect()->back()->with('success', 'Kategori berhasil diperbarui!');
+    // }
 
     public function destroy(Category $category)
     {

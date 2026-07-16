@@ -13,6 +13,14 @@ class Transaction extends Model
     /** @use HasFactory<\Database\Factories\TransactionFactory> */
     use HasFactory;
 
+    protected function casts(): array
+    {
+        return [
+            'amount' => 'float',
+            'date' => 'date',
+        ];
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -14,6 +14,13 @@ class Wallet extends Model
     /** @use HasFactory<\Database\Factories\WalletFactory> */
     use HasFactory;
 
+    protected function casts(): array
+    {
+        return [
+            'balance' => 'float',
+        ];
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

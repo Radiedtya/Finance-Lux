@@ -474,3 +474,12 @@ export default function UsersIndex() {
         </SidebarInset>
     );
 }
+
+UsersIndex.layout = {
+    breadcrumbs: [
+        {
+            title: 'Admin | User Management',
+            href: '/admin/users',
+        },
+    ],
+};

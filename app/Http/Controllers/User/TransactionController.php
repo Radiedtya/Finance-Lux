@@ -7,7 +7,6 @@ use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class TransactionController extends Controller
@@ -33,14 +32,10 @@ class TransactionController extends Controller
     {
         $validated = $this->validated($request);
 
-        DB::transaction(function () use ($validated) {
-            $transaction = Transaction::create([
-                ...$validated,
-                'user_id' => auth()->id(),
-            ]);
-
-            $this->applyToWalletBalance($transaction, 1);
-        });
+        Transaction::create([
+            ...$validated,
+            'user_id' => auth()->id(),
+        ]);
 
         return redirect()->back()->with('success', 'Transaksi berhasil ditambahkan!');
     }
@@ -51,11 +46,7 @@ class TransactionController extends Controller
 
         $validated = $this->validated($request);
 
-        DB::transaction(function () use ($validated, $transaction) {
-            $this->applyToWalletBalance($transaction, -1);
-            $transaction->update($validated);
-            $this->applyToWalletBalance($transaction->refresh(), 1);
-        });
+        $transaction->update($validated);
 
         return redirect()->back()->with('success', 'Transaksi berhasil diperbarui!');
     }
@@ -64,10 +55,7 @@ class TransactionController extends Controller
     {
         abort_if($transaction->user_id !== auth()->id(), 403);
 
-        DB::transaction(function () use ($transaction) {
-            $this->applyToWalletBalance($transaction, -1);
-            $transaction->delete();
-        });
+        $transaction->delete();
 
         return redirect()->back()->with('success', 'Transaksi berhasil dihapus!');
     }
@@ -80,7 +68,7 @@ class TransactionController extends Controller
                 'exists:wallets,id,user_id,' . auth()->id(),
             ],
             'category_id' => [
-                'nullable',
+                'required',
                 'exists:categories,id,user_id,' . auth()->id(),
             ],
             'amount' => 'required|numeric|min:0.01',
@@ -88,13 +76,5 @@ class TransactionController extends Controller
             'description' => 'nullable|string|max:255',
             'date' => 'required|date',
         ]);
-    }
-
-    private function applyToWalletBalance(Transaction $transaction, int $direction): void
-    {
-        $amount = $transaction->amount * $direction;
-        $signedAmount = $transaction->type === 'income' ? $amount : -$amount;
-
-        Wallet::where('id', $transaction->wallet_id)->increment('balance', $signedAmount);
     }
 }

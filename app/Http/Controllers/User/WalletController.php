@@ -24,7 +24,6 @@ class WalletController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'balance' => 'required|numeric|min:0',
         ]);
 
         Wallet::create([
@@ -41,7 +40,6 @@ class WalletController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'balance' => 'required|numeric|min:0',
         ]);
 
         $wallet->update($validated);

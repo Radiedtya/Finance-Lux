@@ -1,11 +1,15 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
+
 use App\Http\Controllers\Auth\OAuthController;
+
+use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\WalletController;
 use App\Http\Controllers\User\CategoryController;
 use App\Http\Controllers\User\TransactionController;
-use App\Http\Controllers\Admin\UserController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'welcome')->name('home');
@@ -18,7 +22,9 @@ Route::any('/register', function () {
 });
 
 Route::middleware(['auth', 'verified', 'is_user'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    // Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
+
 
     Route::resource('wallets', WalletController::class);
     Route::resource('categories', CategoryController::class);
