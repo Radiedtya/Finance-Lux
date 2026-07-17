@@ -21,7 +21,19 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { 
+    // User
+    dashboard, 
+    userWallets, 
+    userCategories, 
+    userTransactions,
+
+    // Admin
+    adminDashboard, 
+    adminUsers,
+} from '@/routes';
 import type { NavItem } from '@/types';
+
 
 const footerNavItems: NavItem[] = [
     {
@@ -39,12 +51,12 @@ const footerNavItems: NavItem[] = [
 const adminNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: '/admin/dashboard',
+        href: adminDashboard(),
         icon: LayoutGrid,
     },
     {
         title: 'User Management',
-        href: '/admin/users',
+        href: adminUsers(),
         icon: Users,
     },
 ];
@@ -52,22 +64,22 @@ const adminNavItems: NavItem[] = [
 const userNavItems: NavItem[] = [
     {
         title: 'Dashboard',
-        href: '/dashboard',
+        href: dashboard(),
         icon: LayoutGrid,
     },
     {
         title: 'Wallets',
-        href: '/wallets',
+        href: userWallets(),
         icon: Wallet,
     },
     {
         title: 'Categories',
-        href: '/categories',
+        href: userCategories(),
         icon: Tags,
     },
     {
         title: 'Transactions',
-        href: '/transactions',
+        href: userTransactions(),
         icon: ArrowRightLeft,
     },
 ];

@@ -1,0 +1,805 @@
+import {
+    queryParams,
+    type RouteQueryOptions,
+    type RouteDefinition,
+    type RouteFormDefinition,
+} from './../wayfinder';
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
+ * @route '/login'
+ */
+export const login = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: login.url(options),
+    method: 'get',
+});
+
+login.definition = {
+    methods: ['get', 'head'],
+    url: '/login',
+} satisfies RouteDefinition<['get', 'head']>;
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
+ * @route '/login'
+ */
+login.url = (options?: RouteQueryOptions) => {
+    return login.definition.url + queryParams(options);
+};
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
+ * @route '/login'
+ */
+login.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: login.url(options),
+    method: 'get',
+});
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
+ * @route '/login'
+ */
+login.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: login.url(options),
+    method: 'head',
+});
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
+ * @route '/login'
+ */
+const loginForm = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: login.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
+ * @route '/login'
+ */
+loginForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: login.url(options),
+    method: 'get',
+});
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::login
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:47
+ * @route '/login'
+ */
+loginForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: login.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        },
+    }),
+    method: 'get',
+});
+
+login.form = loginForm;
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:100
+ * @route '/logout'
+ */
+export const logout = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'post'> => ({
+    url: logout.url(options),
+    method: 'post',
+});
+
+logout.definition = {
+    methods: ['post'],
+    url: '/logout',
+} satisfies RouteDefinition<['post']>;
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:100
+ * @route '/logout'
+ */
+logout.url = (options?: RouteQueryOptions) => {
+    return logout.definition.url + queryParams(options);
+};
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:100
+ * @route '/logout'
+ */
+logout.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: logout.url(options),
+    method: 'post',
+});
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:100
+ * @route '/logout'
+ */
+const logoutForm = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'post'> => ({
+    action: logout.url(options),
+    method: 'post',
+});
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::logout
+ * @see vendor/laravel/fortify/src/Http/Controllers/AuthenticatedSessionController.php:100
+ * @route '/logout'
+ */
+logoutForm.post = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'post'> => ({
+    action: logout.url(options),
+    method: 'post',
+});
+
+logout.form = logoutForm;
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
+ * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
+ * @route '/register'
+ */
+export const register = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'get'> => ({
+    url: register.url(options),
+    method: 'get',
+});
+
+register.definition = {
+    methods: ['get', 'head'],
+    url: '/register',
+} satisfies RouteDefinition<['get', 'head']>;
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
+ * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
+ * @route '/register'
+ */
+register.url = (options?: RouteQueryOptions) => {
+    return register.definition.url + queryParams(options);
+};
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
+ * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
+ * @route '/register'
+ */
+register.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: register.url(options),
+    method: 'get',
+});
+/**
+ * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
+ * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
+ * @route '/register'
+ */
+register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: register.url(options),
+    method: 'head',
+});
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
+ * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
+ * @route '/register'
+ */
+const registerForm = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: register.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
+ * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
+ * @route '/register'
+ */
+registerForm.get = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: register.url(options),
+    method: 'get',
+});
+/**
+ * @see \Laravel\Fortify\Http\Controllers\RegisteredUserController::register
+ * @see vendor/laravel/fortify/src/Http/Controllers/RegisteredUserController.php:41
+ * @route '/register'
+ */
+registerForm.head = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: register.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        },
+    }),
+    method: 'get',
+});
+
+register.form = registerForm;
+
+/**
+ * @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/'
+ */
+export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: home.url(options),
+    method: 'get',
+});
+
+home.definition = {
+    methods: ['get', 'head'],
+    url: '/',
+} satisfies RouteDefinition<['get', 'head']>;
+
+/**
+ * @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/'
+ */
+home.url = (options?: RouteQueryOptions) => {
+    return home.definition.url + queryParams(options);
+};
+
+/**
+ * @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/'
+ */
+home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: home.url(options),
+    method: 'get',
+});
+/**
+ * @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/'
+ */
+home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: home.url(options),
+    method: 'head',
+});
+
+/**
+ * @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/'
+ */
+const homeForm = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: home.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/'
+ */
+homeForm.get = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: home.url(options),
+    method: 'get',
+});
+/**
+ * @see \Inertia\Controller::__invoke
+ * @see vendor/inertiajs/inertia-laravel/src/Controller.php:13
+ * @route '/'
+ */
+homeForm.head = (options?: RouteQueryOptions): RouteFormDefinition<'get'> => ({
+    action: home.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        },
+    }),
+    method: 'get',
+});
+
+home.form = homeForm;
+
+// ============================================
+// USER ROUTES
+// ============================================
+
+/**
+ * @see \App\Http\Controllers\User\DashboardController::index
+ * @see app/Http/Controllers/User/DashboardController.php:15
+ * @route '/user/dashboard'
+ */
+export const userDashboard = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'get'> => ({
+    url: userDashboard.url(options),
+    method: 'get',
+});
+
+userDashboard.definition = {
+    methods: ['get', 'head'],
+    url: '/dashboard',
+} satisfies RouteDefinition<['get', 'head']>;
+
+/**
+ * @see \App\Http\Controllers\User\DashboardController::index
+ * @see app/Http/Controllers/User/DashboardController.php:15
+ * @route '/user/dashboard'
+ */
+userDashboard.url = (options?: RouteQueryOptions) => {
+    return userDashboard.definition.url + queryParams(options);
+};
+
+/**
+ * @see \App\Http\Controllers\User\DashboardController::index
+ * @see app/Http/Controllers/User/DashboardController.php:15
+ * @route '/user/dashboard'
+ */
+userDashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: userDashboard.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\DashboardController::index
+ * @see app/Http/Controllers/User/DashboardController.php:15
+ * @route '/user/dashboard'
+ */
+userDashboard.head = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'head'> => ({
+    url: userDashboard.url(options),
+    method: 'head',
+});
+
+/**
+ * @see \App\Http\Controllers\User\DashboardController::index
+ * @see app/Http/Controllers/User/DashboardController.php:15
+ * @route '/user/dashboard'
+ */
+const userDashboardForm = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userDashboard.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\DashboardController::index
+ * @see app/Http/Controllers/User/DashboardController.php:15
+ * @route '/user/dashboard'
+ */
+userDashboardForm.get = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userDashboard.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\DashboardController::index
+ * @see app/Http/Controllers/User/DashboardController.php:15
+ * @route '/user/dashboard'
+ */
+userDashboardForm.head = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userDashboard.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        },
+    }),
+    method: 'get',
+});
+
+userDashboard.form = userDashboardForm;
+
+/**
+ * @see \App\Http\Controllers\User\TransactionController::index
+ * @see app/Http/Controllers/User/TransactionController.php
+ * @route '/user/transactions'
+ */
+export const userTransactions = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'get'> => ({
+    url: userTransactions.url(options),
+    method: 'get',
+});
+
+userTransactions.definition = {
+    methods: ['get', 'head'],
+    url: '/transactions',
+} satisfies RouteDefinition<['get', 'head']>;
+
+/**
+ * @see \App\Http\Controllers\User\TransactionController::index
+ * @see app/Http/Controllers/User/TransactionController.php
+ * @route '/user/transactions'
+ */
+userTransactions.url = (options?: RouteQueryOptions) => {
+    return userTransactions.definition.url + queryParams(options);
+};
+
+/**
+ * @see \App\Http\Controllers\User\TransactionController::index
+ * @see app/Http/Controllers/User/TransactionController.php
+ * @route '/user/transactions'
+ */
+userTransactions.get = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'get'> => ({
+    url: userTransactions.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\TransactionController::index
+ * @see app/Http/Controllers/User/TransactionController.php
+ * @route '/user/transactions'
+ */
+userTransactions.head = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'head'> => ({
+    url: userTransactions.url(options),
+    method: 'head',
+});
+
+/**
+ * @see \App\Http\Controllers\User\TransactionController::index
+ * @see app/Http/Controllers/User/TransactionController.php
+ * @route '/user/transactions'
+ */
+const userTransactionsForm = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userTransactions.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\TransactionController::index
+ * @see app/Http/Controllers/User/TransactionController.php
+ * @route '/user/transactions'
+ */
+userTransactionsForm.get = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userTransactions.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\TransactionController::index
+ * @see app/Http/Controllers/User/TransactionController.php
+ * @route '/user/transactions'
+ */
+userTransactionsForm.head = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userTransactions.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        },
+    }),
+    method: 'get',
+});
+
+userTransactions.form = userTransactionsForm;
+
+/**
+ * @see \App\Http\Controllers\User\CategoryController::index
+ * @see app/Http/Controllers/User/CategoryController.php
+ * @route '/user/categories'
+ */
+export const userCategories = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'get'> => ({
+    url: userCategories.url(options),
+    method: 'get',
+});
+
+userCategories.definition = {
+    methods: ['get', 'head'],
+    url: '/categories',
+} satisfies RouteDefinition<['get', 'head']>;
+
+/**
+ * @see \App\Http\Controllers\User\CategoryController::index
+ * @see app/Http/Controllers/User/CategoryController.php
+ * @route '/user/categories'
+ */
+userCategories.url = (options?: RouteQueryOptions) => {
+    return userCategories.definition.url + queryParams(options);
+};
+
+/**
+ * @see \App\Http\Controllers\User\CategoryController::index
+ * @see app/Http/Controllers/User/CategoryController.php
+ * @route '/user/categories'
+ */
+userCategories.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: userCategories.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\CategoryController::index
+ * @see app/Http/Controllers/User/CategoryController.php
+ * @route '/user/categories'
+ */
+userCategories.head = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'head'> => ({
+    url: userCategories.url(options),
+    method: 'head',
+});
+
+/**
+ * @see \App\Http\Controllers\User\CategoryController::index
+ * @see app/Http/Controllers/User/CategoryController.php
+ * @route '/user/categories'
+ */
+const userCategoriesForm = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userCategories.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\CategoryController::index
+ * @see app/Http/Controllers/User/CategoryController.php
+ * @route '/user/categories'
+ */
+userCategoriesForm.get = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userCategories.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\CategoryController::index
+ * @see app/Http/Controllers/User/CategoryController.php
+ * @route '/user/categories'
+ */
+userCategoriesForm.head = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userCategories.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        },
+    }),
+    method: 'get',
+});
+
+userCategories.form = userCategoriesForm;
+
+/**
+ * @see \App\Http\Controllers\User\WalletController::index
+ * @see app/Http/Controllers/User/WalletController.php
+ * @route '/user/wallets'
+ */
+export const userWallets = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'get'> => ({
+    url: userWallets.url(options),
+    method: 'get',
+});
+
+userWallets.definition = {
+    methods: ['get', 'head'],
+    url: '/wallets',
+} satisfies RouteDefinition<['get', 'head']>;
+
+/**
+ * @see \App\Http\Controllers\User\WalletController::index
+ * @see app/Http/Controllers/User/WalletController.php
+ * @route '/user/wallets'
+ */
+userWallets.url = (options?: RouteQueryOptions) => {
+    return userWallets.definition.url + queryParams(options);
+};
+
+/**
+ * @see \App\Http\Controllers\User\WalletController::index
+ * @see app/Http/Controllers/User/WalletController.php
+ * @route '/user/wallets'
+ */
+userWallets.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: userWallets.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\WalletController::index
+ * @see app/Http/Controllers/User/WalletController.php
+ * @route '/user/wallets'
+ */
+userWallets.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: userWallets.url(options),
+    method: 'head',
+});
+
+/**
+ * @see \App\Http\Controllers\User\WalletController::index
+ * @see app/Http/Controllers/User/WalletController.php
+ * @route '/user/wallets'
+ */
+const userWalletsForm = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userWallets.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\WalletController::index
+ * @see app/Http/Controllers/User/WalletController.php
+ * @route '/user/wallets'
+ */
+userWalletsForm.get = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userWallets.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\User\WalletController::index
+ * @see app/Http/Controllers/User/WalletController.php
+ * @route '/user/wallets'
+ */
+userWalletsForm.head = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: userWallets.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        },
+    }),
+    method: 'get',
+});
+
+userWallets.form = userWalletsForm;
+
+// ============================================
+// ADMIN ROUTES (if needed)
+// ============================================
+
+/**
+ * @see \App\Http\Controllers\Admin\DashboardController::index
+ * @see app/Http/Controllers/Admin/DashboardController.php
+ * @route '/admin/dashboard'
+ */
+export const adminDashboard = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'get'> => ({
+    url: adminDashboard.url(options),
+    method: 'get',
+});
+
+adminDashboard.definition = {
+    methods: ['get', 'head'],
+    url: '/admin/dashboard',
+} satisfies RouteDefinition<['get', 'head']>;
+
+/**
+ * @see \App\Http\Controllers\Admin\DashboardController::index
+ * @see app/Http/Controllers/Admin/DashboardController.php
+ * @route '/admin/dashboard'
+ */
+adminDashboard.url = (options?: RouteQueryOptions) => {
+    return adminDashboard.definition.url + queryParams(options);
+};
+
+/**
+ * @see \App\Http\Controllers\Admin\DashboardController::index
+ * @see app/Http/Controllers/Admin/DashboardController.php
+ * @route '/admin/dashboard'
+ */
+adminDashboard.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: adminDashboard.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\Admin\DashboardController::index
+ * @see app/Http/Controllers/Admin/DashboardController.php
+ * @route '/admin/dashboard'
+ */
+adminDashboard.head = (
+    options?: RouteQueryOptions,
+): RouteDefinition<'head'> => ({
+    url: adminDashboard.url(options),
+    method: 'head',
+});
+
+/**
+ * @see \App\Http\Controllers\Admin\DashboardController::index
+ * @see app/Http/Controllers/Admin/DashboardController.php
+ * @route '/admin/dashboard'
+ */
+const adminDashboardForm = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: adminDashboard.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\Admin\DashboardController::index
+ * @see app/Http/Controllers/Admin/DashboardController.php
+ * @route '/admin/dashboard'
+ */
+adminDashboardForm.get = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: adminDashboard.url(options),
+    method: 'get',
+});
+
+/**
+ * @see \App\Http\Controllers\Admin\DashboardController::index
+ * @see app/Http/Controllers/Admin/DashboardController.php
+ * @route '/admin/dashboard'
+ */
+adminDashboardForm.head = (
+    options?: RouteQueryOptions,
+): RouteFormDefinition<'get'> => ({
+    action: adminDashboard.url({
+        [options?.mergeQuery ? 'mergeQuery' : 'query']: {
+            _method: 'HEAD',
+            ...(options?.query ?? options?.mergeQuery ?? {}),
+        },
+    }),
+    method: 'get',
+});
+
+adminDashboard.form = adminDashboardForm;
+
+// ============================================
+// ALIASES FOR BACKWARDS COMPATIBILITY
+// ============================================
+
+/**
+ * @deprecated Use userDashboard instead
+ */
+export const dashboard = userDashboard;
+
+/**
+ * @deprecated Use userTransactions instead
+ */
+export const transactions = userTransactions;
+
+/**
+ * @deprecated Use userCategories instead
+ */
+export const categories = userCategories;
+
+/**
+ * @deprecated Use userWallets instead
+ */
+export const wallets = userWallets;
+
+
+/* tambahkan script ini bila ada error/perubahan di resources>js>routes>index.ts */

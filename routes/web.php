@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\LandingController;
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
@@ -12,7 +13,9 @@ use App\Http\Controllers\User\TransactionController;
 
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+// Route::inertia('/', 'welcome')->name('home');
+
+Route::get('/', [LandingController::class, 'index'])->name('home');
 
 Route::get('/auth/github', [OAuthController::class, 'redirectToGithub'])->name('auth.github');
 Route::get('/auth/github/callback', [OAuthController::class, 'handleGithubCallback']);
@@ -22,19 +25,29 @@ Route::any('/register', function () {
 });
 
 Route::middleware(['auth', 'verified', 'is_user'])->group(function () {
-    // Route::inertia('dashboard', 'dashboard')->name('dashboard');
     Route::get('/dashboard', [UserDashboardController::class, 'index'])->name('dashboard');
 
+    Route::resource('wallets', WalletController::class)->names([
+        'index' => 'userWallets',
+    ]);
 
-    Route::resource('wallets', WalletController::class);
-    Route::resource('categories', CategoryController::class);
-    Route::resource('transactions', TransactionController::class);
+    Route::resource('categories', CategoryController::class)->names([
+        'index' => 'userCategories',
+    ]);
+
+    Route::resource('transactions', TransactionController::class)->names([
+        'index' => 'userTransactions',
+    ]);
 });
 
 Route::prefix('admin')->middleware(['auth', 'verified', 'is_admin'])->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('adminDashboard');
 
-    Route::resource('users', UserController::class)->only(['index', 'update']);
+    Route::resource('users', UserController::class)
+        ->only(['index', 'update'])
+        ->names([
+            'index' => 'adminUsers',
+        ]);
 });
 
 require __DIR__.'/settings.php';

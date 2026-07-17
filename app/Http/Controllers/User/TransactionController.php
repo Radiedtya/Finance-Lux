@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 class TransactionController extends Controller
@@ -32,6 +33,12 @@ class TransactionController extends Controller
     {
         $validated = $this->validated($request);
 
+        $this->assertSufficientBalance(
+            $validated['wallet_id'],
+            $validated['type'],
+            $validated['amount'],
+        );
+
         Transaction::create([
             ...$validated,
             'user_id' => auth()->id(),
@@ -45,6 +52,13 @@ class TransactionController extends Controller
         abort_if($transaction->user_id !== auth()->id(), 403);
 
         $validated = $this->validated($request);
+
+        $this->assertSufficientBalance(
+            $validated['wallet_id'],
+            $validated['type'],
+            $validated['amount'],
+            $transaction,
+        );
 
         $transaction->update($validated);
 
@@ -76,5 +90,39 @@ class TransactionController extends Controller
             'description' => 'nullable|string|max:255',
             'date' => 'required|date',
         ]);
+    }
+
+    /**
+     * Pastikan saldo dompet cukup kalau transaksi ini expense.
+     * Kalau ini update dan wallet-nya sama dengan transaksi lama,
+     * efek transaksi lama di-undo dulu sebelum dicek biar gak salah hitung.
+     */
+    private function assertSufficientBalance(
+        int $walletId,
+        string $type,
+        float $amount,
+        ?Transaction $excluding = null,
+    ): void {
+        if ($type !== 'expense') {
+            return;
+        }
+
+        $wallet = Wallet::findOrFail($walletId);
+        $availableBalance = $wallet->balance;
+
+        if ($excluding && (int) $excluding->wallet_id === $walletId) {
+            $oldSignedAmount = $excluding->type === 'income'
+                ? $excluding->amount
+                : -$excluding->amount;
+
+            $availableBalance -= $oldSignedAmount;
+        }
+
+        if ($availableBalance < $amount) {
+            throw ValidationException::withMessages([
+                'amount' => 'Saldo dompet tidak mencukupi. Saldo tersedia: Rp '
+                    . number_format($availableBalance, 0, ',', '.'),
+            ]);
+        }
     }
 }

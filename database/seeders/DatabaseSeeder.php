@@ -33,6 +33,13 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('password'),
         ]);
 
+        $user = User::factory()->create([
+            'name' => 'Radiedtya',
+            'email' => 'rad@financelux.com',
+            'role' => 'user',
+            'password' => Hash::make('password'),
+        ]);
+
         // 3. Buat 3 Dompet/Rekening khusus untuk user di atas
         // $wallets = Wallet::factory()->count(3)->create([
         //     'user_id' => $user->id,

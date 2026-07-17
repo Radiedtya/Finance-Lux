@@ -15,7 +15,7 @@ import { GrTransaction } from 'react-icons/gr';
 import Swal from 'sweetalert2';
 import { SidebarInset } from '@/components/ui/sidebar';
 import { formatRupiah, formatDate } from '@/lib/finance';
-import { userDashboard } from '@/routes';
+import { dashboard } from '@/routes';
 
 type WalletType = {
     id: number;
@@ -740,7 +740,7 @@ UserDashboard.layout = {
     breadcrumbs: [
         {
             title: 'User | Dashboard',
-            href: userDashboard(),
+            href: dashboard(),
         },
     ],
 };
