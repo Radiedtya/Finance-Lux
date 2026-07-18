@@ -1,10 +1,11 @@
 <?php
-use App\Http\Controllers\LandingController;
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 
 use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\LandingController;
 
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\WalletController;
@@ -13,9 +14,11 @@ use App\Http\Controllers\User\TransactionController;
 
 use Illuminate\Support\Facades\Route;
 
-// Route::inertia('/', 'welcome')->name('home');
-
 Route::get('/', [LandingController::class, 'index'])->name('home');
+
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('contact.store');
 
 Route::get('/auth/github', [OAuthController::class, 'redirectToGithub'])->name('auth.github');
 Route::get('/auth/github/callback', [OAuthController::class, 'handleGithubCallback']);
