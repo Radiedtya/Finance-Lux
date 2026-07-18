@@ -223,7 +223,7 @@ function Navbar() {
                             : 'border-zinc-200/60 bg-white/70 backdrop-blur-sm dark:border-zinc-700/40 dark:bg-zinc-900/70'
                     }`}
                 >
-                    <Link href="#home" className="flex items-center gap-2">
+                    <Link href="/" className="flex items-center gap-2">
                         <img
                             src="/images/flx.png"
                             alt="FinanceLux"

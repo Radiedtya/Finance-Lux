@@ -6,10 +6,10 @@ import {
     Eye,
     EyeOff,
     Plus,
-    TrendingUp,
     CreditCard,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { FaMoneyBillWave } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { Input } from '@/components/ui/input';
 import { SidebarInset } from '@/components/ui/sidebar';
@@ -83,7 +83,7 @@ async function openWalletForm(existing?: WalletRow) {
             const style = document.createElement('style');
             style.textContent = `
                 .swal2-popup-custom {
-                    border-radius: 12px !important;
+                    border-radius: 0 !important;
                     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
                 }
                 .swal2-actions-custom {
@@ -95,7 +95,7 @@ async function openWalletForm(existing?: WalletRow) {
                     background-color: #18181b !important;
                     color: white !important;
                     border: none !important;
-                    border-radius: 8px !important;
+                    border-radius: 0 !important;
                     font-size: 0.875rem !important;
                     font-weight: 500 !important;
                     letter-spacing: 0.025em !important;
@@ -110,7 +110,7 @@ async function openWalletForm(existing?: WalletRow) {
                     background-color: transparent !important;
                     color: #71717a !important;
                     border: 1px solid #e4e4e7 !important;
-                    border-radius: 8px !important;
+                    border-radius: 0 !important;
                     font-size: 0.875rem !important;
                     font-weight: 500 !important;
                     letter-spacing: 0.025em !important;
@@ -158,16 +158,16 @@ function WalletCard({
 }) {
     const [isHovered, setIsHovered] = useState(false);
 
-    const getGradientColor = (id: number) => {
+    const getAccentColor = (id: number) => {
         const colors = [
-            'from-blue-500 to-blue-600',
-            'from-emerald-500 to-emerald-600',
-            'from-purple-500 to-purple-600',
-            'from-amber-500 to-amber-600',
-            'from-rose-500 to-rose-600',
-            'from-indigo-500 to-indigo-600',
-            'from-teal-500 to-teal-600',
-            'from-orange-500 to-orange-600',
+            'bg-blue-500',
+            'bg-emerald-500',
+            'bg-purple-500',
+            'bg-amber-500',
+            'bg-rose-500',
+            'bg-indigo-500',
+            'bg-teal-500',
+            'bg-orange-500',
         ];
 
         return colors[id % colors.length];
@@ -201,16 +201,15 @@ function WalletCard({
             }}
             onHoverStart={() => setIsHovered(true)}
             onHoverEnd={() => setIsHovered(false)}
-            className="group relative overflow-hidden rounded-xl border border-zinc-200 bg-white transition-all hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-900 dark:hover:shadow-zinc-800/50"
+            className="group relative overflow-hidden border border-zinc-200 bg-white transition-all hover:shadow-lg dark:border-zinc-800 dark:bg-zinc-900 dark:hover:shadow-zinc-800/50"
         >
-            {/* Gradient Accent Line */}
-            <div className={`absolute top-0 left-0 h-1 w-full bg-gradient-to-r ${getGradientColor(wallet.id)}`} />
+            <div className={`absolute top-0 left-0 h-1 w-full ${getAccentColor(wallet.id)}`} />
 
-            <div className="p-6">
+            <div className="p-5">
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                        <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${getLightColor(wallet.id)}`}>
-                            <WalletIcon className="h-5 w-5" strokeWidth={1.5} />
+                        <div className={`flex h-9 w-9 items-center justify-center ${getLightColor(wallet.id)}`}>
+                            <WalletIcon className="h-4 w-4" strokeWidth={1.5} />
                         </div>
                         <div>
                             <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
@@ -229,7 +228,7 @@ function WalletCard({
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.8 }}
                                 onClick={() => onDelete(wallet)}
-                                className="rounded-lg p-2 text-zinc-400 transition-all hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 dark:hover:text-red-400"
+                                className="p-1.5 text-zinc-400 transition-all hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/50 dark:hover:text-red-400"
                             >
                                 <Eraser className="h-4 w-4" strokeWidth={1.5} />
                             </motion.button>
@@ -237,26 +236,21 @@ function WalletCard({
                     </AnimatePresence>
                 </div>
 
-                <div className="mt-5">
-                    {showBalance ? (
-                        <div>
-                            <p className="text-xs font-medium tracking-widest text-zinc-400 uppercase">
-                                Saldo
-                            </p>
-                            <p className="mt-1 text-2xl font-light tracking-tight text-zinc-900 tabular-nums dark:text-zinc-50">
+                <div className="mt-4">
+                    <p className="text-[11px] font-medium tracking-[0.15em] text-zinc-400 uppercase">
+                        Saldo
+                    </p>
+                    <div className="mt-1 flex items-center gap-2">
+                        {showBalance ? (
+                            <p className="text-xl font-light tracking-tight text-zinc-900 tabular-nums dark:text-zinc-50">
                                 {formatRupiah(wallet.balance)}
                             </p>
-                        </div>
-                    ) : (
-                        <div>
-                            <p className="text-xs font-medium tracking-widest text-zinc-400 uppercase">
-                                Saldo
-                            </p>
-                            <p className="mt-1 text-2xl font-light tracking-tight text-zinc-400 dark:text-zinc-600">
+                        ) : (
+                            <p className="text-xl font-light tracking-tight text-zinc-300 dark:text-zinc-600">
                                 ••••••••
                             </p>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
         </motion.div>
@@ -325,7 +319,7 @@ export default function WalletsIndex() {
                 showConfirmButton: false,
                 timer: 2500,
                 customClass: {
-                    popup: 'rounded-xl dark:bg-zinc-900 dark:text-zinc-100',
+                    popup: 'dark:bg-zinc-900 dark:text-zinc-100',
                 },
             });
         }
@@ -339,7 +333,7 @@ export default function WalletsIndex() {
                 showConfirmButton: false,
                 timer: 3000,
                 customClass: {
-                    popup: 'rounded-xl dark:bg-zinc-900 dark:text-zinc-100',
+                    popup: 'dark:bg-zinc-900 dark:text-zinc-100',
                 },
             });
         }
@@ -385,7 +379,7 @@ export default function WalletsIndex() {
                 const style = document.createElement('style');
                 style.textContent = `
                     .swal2-popup-custom {
-                        border-radius: 12px !important;
+                        border-radius: 0 !important;
                         box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
                     }
                     .swal2-actions-custom {
@@ -397,7 +391,7 @@ export default function WalletsIndex() {
                         background-color: #dc2626 !important;
                         color: white !important;
                         border: none !important;
-                        border-radius: 8px !important;
+                        border-radius: 0 !important;
                         font-size: 0.875rem !important;
                         font-weight: 500 !important;
                         letter-spacing: 0.025em !important;
@@ -412,7 +406,7 @@ export default function WalletsIndex() {
                         background-color: transparent !important;
                         color: #71717a !important;
                         border: 1px solid #e4e4e7 !important;
-                        border-radius: 8px !important;
+                        border-radius: 0 !important;
                         font-size: 0.875rem !important;
                         font-weight: 500 !important;
                         letter-spacing: 0.025em !important;
@@ -453,116 +447,29 @@ export default function WalletsIndex() {
             <Head title="Dompet" />
             <SidebarInset>
                 <div className="flex h-full flex-1 flex-col gap-6 overflow-x-auto bg-zinc-50/50 px-6 py-8 dark:bg-zinc-950/50 sm:px-8 sm:py-10">
-                    {/* Header */}
                     <motion.div
                         initial={{ opacity: 0, y: -8 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.3 }}
-                        className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
+                        className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
                     >
-                        <div className="flex flex-col space-y-1.5">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 p-2 text-white shadow-md">
-                                    <WalletIcon className="h-5 w-5" strokeWidth={1.5} />
-                                </div>
-                                <div>
-                                    <h1 className="text-2xl font-light tracking-tight text-zinc-900 dark:text-zinc-50">
-                                        Dompet
-                                    </h1>
-                                    <TypingHeader />
-                                </div>
-                            </div>
+                        <div className="flex flex-col gap-1">
+                            <h1 className="text-2xl font-light tracking-tight text-zinc-900 dark:text-zinc-50">
+                                Dompet
+                            </h1>
+                            <TypingHeader />
                         </div>
-
-                        <button
-                            type="button"
-                            onClick={handleCreate}
-                            className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:translate-y-[-1px] hover:bg-zinc-800 hover:shadow-md active:translate-y-0 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
-                        >
-                            <Plus className="h-4 w-4" strokeWidth={1.5} />
-                            Tambah Dompet
-                        </button>
-                    </motion.div>
-
-                    {/* Stats Cards */}
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        <motion.div
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-blue-50 p-2 dark:bg-blue-950/50">
-                                    <CreditCard className="h-4 w-4 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />
-                                </div>
-                                <div>
-                                    <p className="text-[11px] font-medium tracking-[0.2em] text-zinc-400 uppercase">
-                                        Total Dompet
-                                    </p>
-                                    <p className="text-xl font-light tracking-tight text-zinc-900 dark:text-zinc-50">
-                                        {totalWallets}
-                                    </p>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-lg bg-emerald-50 p-2 dark:bg-emerald-950/50">
-                                    <TrendingUp className="h-4 w-4 text-emerald-600 dark:text-emerald-400" strokeWidth={1.5} />
-                                </div>
-                                <div>
-                                    <p className="text-[11px] font-medium tracking-[0.2em] text-zinc-400 uppercase">
-                                        Total Saldo
-                                    </p>
-                                    <div className="flex items-center gap-2">
-                                        {showBalance ? (
-                                            <p className="text-xl font-light tracking-tight text-zinc-900 tabular-nums dark:text-zinc-50">
-                                                {formatRupiah(animatedTotal)}
-                                            </p>
-                                        ) : (
-                                            <p className="text-xl font-light tracking-tight text-zinc-400 dark:text-zinc-600">
-                                                ••••••••
-                                            </p>
-                                        )}
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowBalance(!showBalance)}
-                                            className="rounded-lg p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
-                                            title={showBalance ? 'Sembunyikan saldo' : 'Tampilkan saldo'}
-                                        >
-                                            {showBalance ? (
-                                                <EyeOff className="h-4 w-4" strokeWidth={1.5} />
-                                            ) : (
-                                                <Eye className="h-4 w-4" strokeWidth={1.5} />
-                                            )}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        <motion.div
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.3 }}
-                            className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900"
-                        >
-                            <div className="relative w-full">
+                        
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                            <div className="relative w-full sm:w-64">
                                 <Input
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                     placeholder="Cari dompet..."
-                                    className="rounded-lg border-zinc-200 bg-zinc-50 pl-9 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
+                                    className="rounded-none! border-zinc-200 bg-zinc-50 pl-9 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100"
                                 />
                                 <svg
-                                    className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400"
+                                    className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400 pointer-events-none"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -575,17 +482,85 @@ export default function WalletsIndex() {
                                     />
                                 </svg>
                             </div>
+
+                            <button
+                                type="button"
+                                onClick={handleCreate}
+                                className="inline-flex shrink-0 items-center gap-2 bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:-translate-y-px hover:bg-zinc-800 hover:shadow-md active:translate-y-0 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                            >
+                                <Plus className="h-4 w-4" strokeWidth={1.5} />
+                                Tambah Dompet
+                            </button>
+                        </div>
+                    </motion.div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="flex items-center gap-3"
+                        >
+                            <div className="bg-emerald-50 p-2 dark:bg-emerald-950/50">
+                                <FaMoneyBillWave className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                            </div>
+                            <div>
+                                <p className="text-[11px] font-medium tracking-[0.2em] text-zinc-400 uppercase">
+                                    Total Saldo
+                                </p>
+                                <div className="flex items-center gap-2">
+                                    {showBalance ? (
+                                        <p className="text-xl font-light tracking-tight text-zinc-900 tabular-nums dark:text-zinc-50">
+                                            {formatRupiah(animatedTotal)}
+                                        </p>
+                                    ) : (
+                                        <p className="text-xl font-light tracking-tight text-zinc-300 dark:text-zinc-600">
+                                            ••••••••
+                                        </p>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowBalance(!showBalance)}
+                                        className="p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+                                        title={showBalance ? 'Sembunyikan saldo' : 'Tampilkan saldo'}
+                                    >
+                                        {showBalance ? (
+                                            <EyeOff className="h-4 w-4" strokeWidth={1.5} />
+                                        ) : (
+                                            <Eye className="h-4 w-4" strokeWidth={1.5} />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="flex items-center gap-3 sm:justify-end"
+                        >
+                            <div className="bg-blue-50 p-2 dark:bg-blue-950/50">
+                                <CreditCard className="h-4 w-4 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />
+                            </div>
+                            <div>
+                                <p className="text-[11px] font-medium tracking-[0.2em] text-zinc-400 uppercase">
+                                    Total Dompet
+                                </p>
+                                <p className="text-xl font-light tracking-tight text-zinc-900 dark:text-zinc-50">
+                                    {totalWallets}
+                                </p>
+                            </div>
                         </motion.div>
                     </div>
 
-                    {/* Wallet Grid */}
                     {filteredWallets.length === 0 ? (
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            className="flex flex-col items-center justify-center rounded-xl border border-dashed border-zinc-300 bg-white py-16 text-center dark:border-zinc-700 dark:bg-zinc-900"
+                            className="flex flex-col items-center justify-center border border-dashed border-zinc-300 bg-white py-16 text-center dark:border-zinc-700 dark:bg-zinc-900"
                         >
-                            <div className="rounded-full bg-zinc-100 p-4 dark:bg-zinc-800">
+                            <div className="bg-zinc-100 p-4 dark:bg-zinc-800">
                                 <WalletIcon className="h-8 w-8 text-zinc-400 dark:text-zinc-600" strokeWidth={1.5} />
                             </div>
                             <h3 className="mt-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">
