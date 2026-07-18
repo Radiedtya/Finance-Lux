@@ -29,7 +29,7 @@ import {
     User,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import { FaMapMarkedAlt, FaGithubAlt } from "react-icons/fa";
+import { FaMapMarkedAlt, FaGithubAlt } from 'react-icons/fa';
 import { PiWhatsappLogoDuotone } from 'react-icons/pi';
 import { SiGmail } from 'react-icons/si';
 import Swal from 'sweetalert2';
@@ -230,7 +230,7 @@ function Navbar() {
                             className="h-7 w-7 rounded-full object-contain"
                         />
                         <span className="text-sm font-semibold text-zinc-900 dark:text-white">
-                            FinanceLux
+                            Finance Lux
                         </span>
                     </Link>
 
@@ -251,6 +251,7 @@ function Navbar() {
                     </div>
 
                     <div className="hidden items-center gap-2.5 md:flex">
+                        <span className="mr-0.5 h-4 w-px bg-zinc-200 dark:bg-zinc-700" />
                         {auth?.user ? (
                             <Link
                                 href={dashboardRoute}
@@ -264,9 +265,6 @@ function Navbar() {
                                     href={login()}
                                     className="flex items-center gap-1.5 text-[11px] text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
                                 >
-                                    <span className="text-zinc-300 dark:text-zinc-600">
-                                        |
-                                    </span>
                                     <User className="h-3 w-3" strokeWidth={2} />
                                     Masuk
                                 </Link>
@@ -392,9 +390,9 @@ function Hero() {
         >
             <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center px-5 py-24">
                 <motion.div
-                    initial={{ opacity: 0, y: 16 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
+                    transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
                     className="max-w-xl"
                 >
                     <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3.5 py-1 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
@@ -406,7 +404,7 @@ function Hero() {
                         Kelola uang Anda tanpa drama spreadsheet
                     </h1>
 
-                    <div className="mt-5 min-h-[3rem]">
+                    <div className="mt-5 min-h-12">
                         <p className="text-base leading-relaxed text-zinc-500 sm:text-lg dark:text-zinc-400">
                             {displayText}
                             {!isTypingComplete && (
@@ -416,9 +414,9 @@ function Hero() {
                     </div>
 
                     <motion.div
-                        initial={{ opacity: 0, y: 12 }}
+                        initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4, delay: 0.5 }}
+                        transition={{ duration: 0.5, delay: 0.5 }}
                         className="mt-8 flex flex-col gap-3 sm:flex-row"
                     >
                         <Link
@@ -439,7 +437,7 @@ function Hero() {
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ duration: 0.4, delay: 0.7 }}
+                        transition={{ duration: 0.5, delay: 0.7 }}
                         className="mt-10 flex items-center gap-2"
                     >
                         <div className="flex">
@@ -457,9 +455,9 @@ function Hero() {
 
                     <div className="mt-12 lg:hidden">
                         <motion.img
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, delay: 0.8 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.7, delay: 0.8 }}
                             src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
                             alt="FinanceLux Dashboard"
                             className="w-full rounded-lg object-contain"
@@ -476,19 +474,19 @@ function Hero() {
                 </motion.div>
             </div>
 
-            <div className="absolute top-0 right-0 hidden h-full w-1/2 bg-gradient-to-l from-zinc-50 via-zinc-50/80 to-transparent px-8 lg:flex lg:flex-col lg:items-center lg:justify-center dark:from-zinc-900 dark:via-zinc-900/60 dark:to-transparent">
+            <div className="absolute top-0 right-0 hidden h-full w-1/2 bg-linear-to-l from-zinc-50 via-zinc-50/80 to-transparent px-8 lg:flex lg:flex-col lg:items-center lg:justify-center dark:from-zinc-900 dark:via-zinc-900/60 dark:to-transparent">
                 <motion.img
-                    initial={{ opacity: 0, y: 30, scale: 0.97 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ duration: 0.7, delay: 0.3 }}
+                    initial={{ opacity: 0, x: 40, scale: 0.95 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
                     src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
                     alt="FinanceLux Dashboard"
                     className="w-full max-w-lg rounded-lg object-contain"
                 />
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.9 }}
+                    transition={{ duration: 0.6, delay: 0.9 }}
                     className="mt-6 text-center"
                 >
                     <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -531,15 +529,15 @@ function HowItWorks() {
     return (
         <section
             id="how-it-works"
-            className="bg-zinc-50 py-20 dark:bg-zinc-900"
+            className="bg-zinc-50 py-24 dark:bg-zinc-900"
         >
             <div className="mx-auto max-w-6xl px-5">
                 <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
+                    initial={{ opacity: 0, x: -30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
                     viewport={{ once: true }}
-                    className="mb-12"
+                    className="mb-14"
                 >
                     <p className="text-xs font-medium tracking-widest text-zinc-400 uppercase">
                         Cara Kerja
@@ -556,19 +554,20 @@ function HowItWorks() {
                         return (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, y: 16 }}
-                                whileInView={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0, x: -40 }}
+                                whileInView={{ opacity: 1, x: 0 }}
                                 transition={{
-                                    duration: 0.4,
-                                    delay: index * 0.1,
+                                    duration: 0.5,
+                                    delay: index * 0.15,
+                                    ease: 'easeOut',
                                 }}
                                 viewport={{ once: true }}
-                                className="relative rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950"
+                                className="relative rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950"
                             >
                                 <span className="absolute top-5 right-5 text-3xl font-light text-zinc-100 dark:text-zinc-800">
                                     {step.number}
                                 </span>
-                                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 text-white dark:bg-white dark:text-zinc-900">
                                     <Icon className="h-4 w-4" strokeWidth={2} />
                                 </div>
                                 <h3 className="mt-4 text-sm font-semibold text-zinc-900 dark:text-white">
@@ -657,7 +656,7 @@ function StatsSection({ stats }: { stats: Stats }) {
         <section
             id="stats"
             ref={ref}
-            className="bg-zinc-900 py-16 dark:bg-zinc-950"
+            className="bg-zinc-900 py-20 dark:bg-zinc-950"
         >
             <div className="mx-auto max-w-6xl px-5">
                 <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -667,14 +666,16 @@ function StatsSection({ stats }: { stats: Stats }) {
                         return (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, y: 12 }}
-                                whileInView={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0, scale: 0.85 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
                                 transition={{
-                                    duration: 0.4,
-                                    delay: index * 0.08,
+                                    type: 'spring',
+                                    stiffness: 100,
+                                    damping: 15,
+                                    delay: index * 0.1,
                                 }}
                                 viewport={{ once: true }}
-                                className="rounded-lg border border-zinc-800 bg-zinc-900 p-5 text-center dark:border-zinc-800 dark:bg-zinc-900/50"
+                                className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 text-center dark:border-zinc-800 dark:bg-zinc-900/50"
                             >
                                 <Icon
                                     className="mx-auto mb-2 h-4 w-4 text-zinc-500"
@@ -707,15 +708,15 @@ function Features({ features }: { features: Feature[] }) {
         <section
             id="features"
             ref={ref}
-            className="bg-white py-20 dark:bg-zinc-950"
+            className="bg-white py-24 dark:bg-zinc-950"
         >
             <div className="mx-auto max-w-6xl px-5">
                 <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
+                    initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
+                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    transition={{ duration: 0.5 }}
                     viewport={{ once: true }}
-                    className="mb-12"
+                    className="mb-14"
                 >
                     <p className="text-xs font-medium tracking-widest text-zinc-400 uppercase">
                         Fitur
@@ -736,17 +737,25 @@ function Features({ features }: { features: Feature[] }) {
                         return (
                             <motion.div
                                 key={index}
-                                initial={{ opacity: 0, y: 16 }}
-                                whileInView={{ opacity: 1, y: 0 }}
+                                initial={{
+                                    opacity: 0,
+                                    y: 30,
+                                    filter: 'blur(5px)',
+                                }}
+                                whileInView={{
+                                    opacity: 1,
+                                    y: 0,
+                                    filter: 'blur(0px)',
+                                }}
                                 transition={{
-                                    duration: 0.4,
+                                    duration: 0.5,
                                     delay: index * 0.05,
                                 }}
                                 viewport={{ once: true }}
                                 style={{ y }}
-                                className="rounded-lg border border-zinc-200 bg-white p-5 transition-colors hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
+                                className="rounded-xl border border-zinc-200 bg-white p-5 transition-colors hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
                             >
-                                <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-md bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                                <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
                                     <Icon className="h-4 w-4" strokeWidth={2} />
                                 </div>
                                 <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
@@ -768,15 +777,15 @@ function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
     return (
         <section
             id="testimonials"
-            className="bg-zinc-50 py-20 dark:bg-zinc-900"
+            className="bg-zinc-50 py-24 dark:bg-zinc-900"
         >
             <div className="mx-auto max-w-6xl px-5">
                 <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
                     viewport={{ once: true }}
-                    className="mb-12"
+                    className="mb-14"
                 >
                     <p className="text-xs font-medium tracking-widest text-zinc-400 uppercase">
                         Testimoni
@@ -790,11 +799,11 @@ function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
                     {testimonials.map((testimonial, index) => (
                         <motion.div
                             key={index}
-                            initial={{ opacity: 0, y: 12 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.4, delay: index * 0.08 }}
+                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ duration: 0.4, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className="rounded-lg border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+                            className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
                         >
                             <div className="flex items-center gap-3">
                                 <img
@@ -857,14 +866,14 @@ function FAQSection() {
     ];
 
     return (
-        <section id="faq" className="bg-white py-20 dark:bg-zinc-950">
+        <section id="faq" className="bg-white py-24 dark:bg-zinc-950">
             <div className="mx-auto max-w-3xl px-5">
                 <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
+                    initial={{ opacity: 0, x: 30 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
                     viewport={{ once: true }}
-                    className="mb-12"
+                    className="mb-14"
                 >
                     <p className="text-xs font-medium tracking-widest text-zinc-400 uppercase">
                         FAQ
@@ -1008,14 +1017,14 @@ function ContactSection() {
     ];
 
     return (
-        <section id="contact" className="bg-zinc-50 py-20 dark:bg-zinc-900">
+        <section id="contact" className="bg-zinc-50 py-24 dark:bg-zinc-900">
             <div className="mx-auto max-w-6xl px-5">
                 <motion.div
-                    initial={{ opacity: 0, y: 16 }}
+                    initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4 }}
+                    transition={{ duration: 0.5 }}
                     viewport={{ once: true }}
-                    className="mb-12"
+                    className="mb-14"
                 >
                     <p className="text-xs font-medium tracking-widest text-zinc-400 uppercase">
                         Kontak
@@ -1030,9 +1039,9 @@ function ContactSection() {
 
                 <div className="grid gap-10 lg:grid-cols-5">
                     <motion.form
-                        initial={{ opacity: 0, y: 16 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.4 }}
+                        initial={{ opacity: 0, x: -30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, ease: 'easeOut' }}
                         viewport={{ once: true }}
                         onSubmit={handleSubmit}
                         className="col-span-3 space-y-4"
@@ -1121,16 +1130,17 @@ function ContactSection() {
                             return (
                                 <motion.div
                                     key={index}
-                                    initial={{ opacity: 0, y: 12 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
+                                    initial={{ opacity: 0, x: 30 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
                                     transition={{
-                                        duration: 0.4,
-                                        delay: index * 0.08,
+                                        duration: 0.5,
+                                        delay: index * 0.1,
+                                        ease: 'easeOut',
                                     }}
                                     viewport={{ once: true }}
-                                    className="flex items-center gap-3 rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
+                                    className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
                                 >
-                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
                                         <Icon
                                             className="h-4 w-4"
                                             strokeWidth={2}
@@ -1158,26 +1168,30 @@ function Footer() {
     return (
         <footer className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
             <div className="mx-auto flex max-w-6xl flex-col items-center px-8 py-8 sm:flex-row">
-                <Link href="#home" className="text-xl font-black leading-none text-zinc-900 select-none dark:text-white">
+                <Link
+                    href="#home"
+                    className="text-xl leading-none font-black text-zinc-900 select-none dark:text-white"
+                >
                     <span className="flex items-center gap-2">
                         <img
                             src="/images/flx.png"
                             alt="FinanceLux"
-                            className="h-8 w-8 rounded-full object-contain"
+                            className="h-6 w-6 rounded-md object-contain"
                         />
-                        <span className="text-indigo-600">FinanceLux .</span>
+                        Finance<span className="text-indigo-600">Lux.</span>
                     </span>
                 </Link>
-                <p className="mt-4 text-sm text-zinc-500 sm:ml-4 sm:pl-4 sm:border-l sm:border-zinc-200 sm:mt-0 dark:text-zinc-400 dark:sm:border-zinc-700">
-                    &copy; {new Date().getFullYear()} FinanceLux - All rights reserved.
+                <p className="mt-4 text-sm text-zinc-500 sm:mt-0 sm:ml-4 sm:border-l sm:border-zinc-200 sm:pl-4 dark:text-zinc-400 dark:sm:border-zinc-700">
+                    &copy; {new Date().getFullYear()} Finance Lux - All rights
+                    reserved.
                 </p>
-                <span className="inline-flex justify-center mt-4 space-x-5 sm:ml-auto sm:mt-0 sm:justify-start">
+                <span className="mt-4 inline-flex justify-center space-x-5 sm:mt-0 sm:ml-auto sm:justify-start">
                     <a
                         href="https://github.com/Radiedtya/finance-lux"
                         className="text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
                     >
                         <span className="sr-only">GitHub</span>
-                        <FaGithubAlt className="h-6 w-6" />
+                        <FaGithubAlt className="h-5 w-5" />
                     </a>
                 </span>
             </div>
