@@ -68,6 +68,80 @@ class LandingController extends Controller
                 'wallets' => 45000,
                 'countries' => 10,
             ],
+            'faqs' => [
+                [
+                    'question' => 'Apa itu Finance Lux?',
+                    'answer' => 'Finance Lux adalah aplikasi pencatatan keuangan pribadi. Anda bisa membuat beberapa dompet, mencatat transaksi, dan mengelompokkannya jadi kategori — semuanya diperbarui otomatis tanpa perlu hitung manual.',
+                    'keywords' => 'finance lux aplikasi keuangan pencatatan dompet',
+                    'icon' => 'faquestion',
+                    'iconColor' => 'text-blue-500',
+                    'callout' => [
+                        'type' => 'info',
+                        'title' => 'Tahukah Kamu?',
+                        'text' => 'Kata "lux" berasal dari bahasa Latin yang berarti cahaya, melambangkan visi kami untuk menerangi pengelolaan keuangan Anda.',
+                    ],
+                ],
+                [
+                    'question' => 'Apakah Finance Lux gratis dipakai?',
+                    'answer' => 'Ya, semua fitur inti seperti dompet, kategori, transaksi, dan ringkasan bulanan sepenuhnya gratis dipakai tanpa batas waktu dan tanpa iklan.',
+                    'keywords' => 'gratis biaya harga berbayar premium',
+                    'icon' => 'chart',
+                    'iconColor' => 'text-emerald-500',
+                    'callout' => [
+                        'type' => 'success',
+                        'title' => 'Janji Kami:',
+                        'text' => 'Kami tidak akan pernah membebankan biaya tersembunyi. Fitur inti akan tetap gratis selamanya.',
+                    ],
+                ],
+                [
+                    'question' => 'Bagaimana cara mulai pakai Finance Lux?',
+                    'answer' => 'Buat akun, tambahkan dompet pertama Anda, lalu mulai catat transaksi. Saldo dan ringkasan akan otomatis terupdate setiap kali ada transaksi baru.',
+                    'keywords' => 'mulai cara daftar akun baru pemula',
+                    'icon' => 'listchecks',
+                    'iconColor' => 'text-purple-500',
+                    'callout' => [
+                        'type' => 'warning',
+                        'title' => 'Tips:',
+                        'text' => 'Agar lebih terorganisir, buatlah kategori pengeluaran terlebih dahulu sebelum mulai mencatat transaksi.',
+                    ],
+                ],
+                [
+                    'question' => 'Apakah data keuangan saya aman?',
+                    'answer' => 'Data disimpan terenkripsi dan hanya bisa diakses lewat akun Anda sendiri. Kami tidak pernah membagikan data transaksi ke pihak ketiga.',
+                    'keywords' => 'aman keamanan enkripsi privasi data bocor',
+                    'icon' => 'secure',
+                    'iconColor' => 'text-red-500',
+                    'callout' => [
+                        'type' => 'danger',
+                        'title' => 'Penting:',
+                        'text' => 'Jangan pernah membagikan password Anda kepada siapa pun, termasuk tim Finance Lux.',
+                    ],
+                ],
+                [
+                    'question' => 'Bisa diakses dari HP?',
+                    'answer' => 'Bisa. Tampilan Finance Lux menyesuaikan otomatis di HP, tablet, maupun desktop — tanpa perlu install aplikasi terpisah di App Store atau Play Store.',
+                    'keywords' => 'hp mobile android ios smartphone tablet akses',
+                    'icon' => 'mobile',
+                    'iconColor' => 'text-amber-500',
+                    'callout' => [
+                        'type' => 'info',
+                        'title' => 'Pro Tip:',
+                        'text' => 'Anda bisa menambahkan shortcut website Finance Lux di layar utama HP Anda agar terasa seperti aplikasi native.',
+                    ],
+                ],
+                [
+                    'question' => 'Apakah saya bisa mengexport data keuangan saya?',
+                    'answer' => 'Ya, Anda bisa mengunduh laporan transaksi bulanan dalam format CSV langsung dari dashboard untuk keperluan analisis lebih lanjut.',
+                    'keywords' => 'export download csv laporan data cetak',
+                    'icon' => 'report',
+                    'iconColor' => 'text-indigo-500',
+                    'callout' => [
+                        'type' => 'success',
+                        'title' => 'Info:',
+                        'text' => 'Fitur export memudahkan Anda yang ingin melakukan audit manual atau mencatatnya kembali di aplikasi spreadsheet pribadi.',
+                    ],
+                ],
+            ],
         ]);
     }
 }

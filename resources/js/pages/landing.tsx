@@ -13,12 +13,9 @@ import {
     Smartphone,
     ArrowRight,
     Star,
-    Users,
-    Globe,
     Menu,
     X,
     ChevronRight,
-    BarChart3,
     ChevronUp,
     Send,
     Loader2,
@@ -28,9 +25,26 @@ import {
     Wallet,
     User,
     Mail,
+    Moon,
+    Sun,
+    Search,
+    Info,
+    CheckCircle,
+    AlertTriangle,
+    AlertCircle,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import { FaMapMarkedAlt, FaGithubAlt } from 'react-icons/fa';
+import {
+    FaMapMarkedAlt,
+    FaGithubAlt,
+    FaQuestion,
+    FaWallet,
+    FaChartLine,
+    FaListOl,
+    FaShieldAlt,
+    FaMobileAlt,
+    FaFileAlt,
+} from 'react-icons/fa';
 import { PiWhatsappLogoDuotone } from 'react-icons/pi';
 import { SiGmail } from 'react-icons/si';
 import Swal from 'sweetalert2';
@@ -56,16 +70,28 @@ type Stats = {
     countries: number;
 };
 
+type CalloutType = 'info' | 'success' | 'warning' | 'danger';
+
+type FAQCallout = {
+    type: CalloutType;
+    title: string;
+    text: string;
+};
+
 type FAQ = {
     question: string;
     answer: string;
+    keywords?: string;
+    icon: string;
+    iconColor: string;
+    callout?: FAQCallout;
 };
 
 type LandingProps = {
     features: Feature[];
     testimonials: Testimonial[];
     stats: Stats;
-    faqs?: FAQ[];
+    faqs: FAQ[];
 };
 
 type FlashProps = {
@@ -181,10 +207,44 @@ function ScrollToTop() {
 function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [isDark, setIsDark] = useState(() => {
+        if (typeof window === 'undefined') {
+            return false;
+        }
+
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia(
+            '(prefers-color-scheme: dark)',
+        ).matches;
+
+        return (
+            saved === 'dark' ||
+            (!saved && prefersDark) ||
+            (!saved && document.documentElement.classList.contains('dark'))
+        );
+    });
     const { auth } = usePage().props as unknown as {
         auth?: { user?: { role?: string } };
     };
     const activeSection = useActiveSection();
+
+    // --- Theme Toggle ---
+    useEffect(() => {
+        if (isDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }, [isDark]);
+
+    const toggleTheme = () => {
+        const next = !isDark;
+        setIsDark(next);
+        document.documentElement.classList.toggle('dark', next);
+        localStorage.setItem('theme', next ? 'dark' : 'light');
+        document.cookie = `theme=${next ? 'dark' : 'light'};path=/;max-age=${365 * 24 * 60 * 60}`;
+    };
+    // --------------------
 
     useEffect(() => {
         const handleScroll = () => {
@@ -192,22 +252,34 @@ function Navbar() {
         };
         window.addEventListener('scroll', handleScroll);
 
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     const dashboardRoute =
         auth?.user?.role === 'admin' ? adminDashboard() : dashboard();
 
     const navLinks = [
-        { href: '#home', id: 'home', label: 'Beranda' },
-        { href: '#how-it-works', id: 'how-it-works', label: 'Cara Kerja' },
-        { href: '#features', id: 'features', label: 'Fitur' },
-        { href: '#testimonials', id: 'testimonials', label: 'Testimoni' },
-        { href: '#faq', id: 'faq', label: 'FAQ' },
-        { href: '#contact', id: 'contact', label: 'Kontak' },
+        { id: 'home', label: 'Beranda' },
+        { id: 'how-it-works', label: 'Cara Kerja' },
+        { id: 'features', label: 'Fitur' },
+        { id: 'testimonials', label: 'Testimoni' },
+        { id: 'faq', label: 'FAQ' },
+        { id: 'contact', label: 'Kontak' },
     ];
+
+    // Fungsi baru untuk scroll tanpa mengubah URL
+    const handleNavClick = (
+        e: React.MouseEvent<HTMLAnchorElement>,
+        id: string,
+    ) => {
+        e.preventDefault(); // Cegah URL berubah jadi #id
+        const element = document.getElementById(id);
+
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            setIsOpen(false); // Tutup menu mobile jika terbuka
+        }
+    };
 
     return (
         <motion.nav
@@ -237,9 +309,10 @@ function Navbar() {
 
                     <div className="hidden items-center gap-0.5 md:flex">
                         {navLinks.map((link) => (
-                            <Link
-                                key={link.href}
-                                href={link.href}
+                            <a
+                                key={link.id}
+                                href="#" // Wajib ada href agar tetap dianggap link (aksesibilitas), tapi di-prevent di JS
+                                onClick={(e) => handleNavClick(e, link.id)}
                                 className={`relative rounded-full px-2.5 py-1 text-[11px] transition-colors ${
                                     activeSection === link.id
                                         ? 'text-zinc-900 after:absolute after:right-2.5 after:bottom-0.5 after:left-2.5 after:h-[1.5px] after:origin-left after:scale-x-100 after:rounded-full after:bg-zinc-900 after:transition-transform after:duration-300 dark:text-white dark:after:bg-white'
@@ -247,11 +320,50 @@ function Navbar() {
                                 }`}
                             >
                                 {link.label}
-                            </Link>
+                            </a>
                         ))}
                     </div>
 
                     <div className="hidden items-center gap-2.5 md:flex">
+                        {/* Theme Toggle */}
+                        <button
+                            onClick={toggleTheme}
+                            className="rounded-full p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                            aria-label="Toggle theme"
+                        >
+                            <AnimatePresence mode="wait" initial={false}>
+                                {isDark ? (
+                                    <motion.span
+                                        key="sun"
+                                        initial={{ rotate: -90, opacity: 0 }}
+                                        animate={{ rotate: 0, opacity: 1 }}
+                                        exit={{ rotate: 90, opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="flex"
+                                    >
+                                        <Sun
+                                            className="h-3.5 w-3.5"
+                                            strokeWidth={2}
+                                        />
+                                    </motion.span>
+                                ) : (
+                                    <motion.span
+                                        key="moon"
+                                        initial={{ rotate: 90, opacity: 0 }}
+                                        animate={{ rotate: 0, opacity: 1 }}
+                                        exit={{ rotate: -90, opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="flex"
+                                    >
+                                        <Moon
+                                            className="h-3.5 w-3.5"
+                                            strokeWidth={2}
+                                        />
+                                    </motion.span>
+                                )}
+                            </AnimatePresence>
+                        </button>
+
                         <span className="mr-0.5 h-4 w-px bg-zinc-200 dark:bg-zinc-700" />
                         {auth?.user ? (
                             <Link
@@ -279,18 +391,31 @@ function Navbar() {
                         )}
                     </div>
 
-                    <button
-                        onClick={() => {
-                            setIsOpen(!isOpen);
-                        }}
-                        className="rounded-full p-1.5 text-zinc-600 transition-colors hover:bg-zinc-100 md:hidden dark:text-zinc-400 dark:hover:bg-zinc-800"
-                    >
-                        {isOpen ? (
-                            <X className="h-4 w-4" />
-                        ) : (
-                            <Menu className="h-4 w-4" />
-                        )}
-                    </button>
+                    <div className="flex items-center gap-1 md:hidden">
+                        {/* Theme Toggle Mobile */}
+                        <button
+                            onClick={toggleTheme}
+                            className="rounded-full p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                            aria-label="Toggle theme"
+                        >
+                            {isDark ? (
+                                <Sun className="h-4 w-4" strokeWidth={2} />
+                            ) : (
+                                <Moon className="h-4 w-4" strokeWidth={2} />
+                            )}
+                        </button>
+
+                        <button
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="rounded-full p-1.5 text-zinc-600 transition-colors hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                        >
+                            {isOpen ? (
+                                <X className="h-4 w-4" />
+                            ) : (
+                                <Menu className="h-4 w-4" />
+                            )}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -304,29 +429,25 @@ function Navbar() {
                     >
                         <div className="mt-2 space-y-1 rounded-2xl border border-zinc-200 bg-white p-3 shadow-lg dark:border-zinc-800 dark:bg-zinc-950">
                             {navLinks.map((link) => (
-                                <Link
-                                    key={link.href}
-                                    href={link.href}
+                                <a
+                                    key={link.id}
+                                    href="#"
+                                    onClick={(e) => handleNavClick(e, link.id)}
                                     className={`block rounded-xl px-3 py-2 text-sm transition-colors ${
                                         activeSection === link.id
                                             ? 'bg-zinc-50 font-medium text-zinc-900 dark:bg-zinc-800 dark:text-white'
                                             : 'text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-800/50'
                                     }`}
-                                    onClick={() => {
-                                        setIsOpen(false);
-                                    }}
                                 >
                                     {link.label}
-                                </Link>
+                                </a>
                             ))}
                             <div className="mt-2 flex flex-col gap-2 border-t border-zinc-100 pt-2 dark:border-zinc-800">
                                 {auth?.user ? (
                                     <Link
                                         href={dashboardRoute}
                                         className="rounded-xl bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-white dark:bg-white dark:text-zinc-900"
-                                        onClick={() => {
-                                            setIsOpen(false);
-                                        }}
+                                        onClick={() => setIsOpen(false)}
                                     >
                                         Dashboard
                                     </Link>
@@ -335,18 +456,14 @@ function Navbar() {
                                         <Link
                                             href={login()}
                                             className="rounded-xl px-4 py-2 text-center text-sm text-zinc-600 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-800/50"
-                                            onClick={() => {
-                                                setIsOpen(false);
-                                            }}
+                                            onClick={() => setIsOpen(false)}
                                         >
                                             Masuk
                                         </Link>
                                         <Link
                                             href={login()}
                                             className="rounded-xl bg-zinc-900 px-4 py-2 text-center text-sm font-medium text-white dark:bg-white dark:text-zinc-900"
-                                            onClick={() => {
-                                                setIsOpen(false);
-                                            }}
+                                            onClick={() => setIsOpen(false)}
                                         >
                                             Coba Gratis
                                         </Link>
@@ -387,7 +504,7 @@ function Hero() {
     return (
         <section
             id="home"
-            className="relative flex min-h-screen items-center overflow-hidden bg-white dark:bg-zinc-950"
+            className="relative flex min-h-screen items-center overflow-hidden bg-zinc-50 dark:bg-zinc-950"
         >
             <div className="relative z-10 mx-auto flex w-full max-w-6xl items-center px-5 py-24">
                 <motion.div
@@ -459,9 +576,9 @@ function Hero() {
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.7, delay: 0.8 }}
-                            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
+                            src="https://merakiui.com/images/components/Catalogue-pana.svg"
                             alt="FinanceLux Dashboard"
-                            className="w-full rounded-lg object-contain"
+                            className="w-full object-contain"
                         />
                         <motion.p
                             initial={{ opacity: 0, y: 10 }}
@@ -480,7 +597,7 @@ function Hero() {
                     initial={{ opacity: 0, x: 40, scale: 0.95 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
-                    src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
+                    src="https://merakiui.com/images/components/Catalogue-pana.svg"
                     alt="FinanceLux Dashboard"
                     className="w-full max-w-lg rounded-lg object-contain"
                 />
@@ -563,7 +680,7 @@ function HowItWorks() {
                                     ease: 'easeOut',
                                 }}
                                 viewport={{ once: true }}
-                                className="relative rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950"
+                                className="relative border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950"
                             >
                                 <span className="absolute top-5 right-5 text-3xl font-light text-zinc-100 dark:text-zinc-800">
                                     {step.number}
@@ -595,6 +712,22 @@ function StatsSection({ stats }: { stats: Stats }) {
     });
     const ref = useRef<HTMLDivElement>(null);
     const hasAnimated = useRef(false);
+
+    function formatNumber(num: number): string {
+        if (num >= 1_000_000) {
+            const val = num / 1_000_000;
+
+            return (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) + 'M';
+        }
+
+        if (num >= 1_000) {
+            const val = num / 1_000;
+
+            return (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) + 'K';
+        }
+
+        return num.toString();
+    }
 
     useEffect(() => {
         function animate() {
@@ -637,60 +770,60 @@ function StatsSection({ stats }: { stats: Stats }) {
             observer.observe(ref.current);
         }
 
-        return () => {
-            observer.disconnect();
-        };
+        return () => observer.disconnect();
     }, [stats]);
 
     const statsData = [
-        { label: 'Pengguna Aktif', value: counts.users, icon: Users },
-        {
-            label: 'Transaksi Tercatat',
-            value: counts.transactions,
-            icon: BarChart3,
-        },
-        { label: 'Dompet Dibuat', value: counts.wallets, icon: Wallet },
-        { label: 'Negara', value: counts.countries, icon: Globe },
+        { label: 'Pengguna Aktif', value: counts.users },
+        { label: 'Transaksi Tercatat', value: counts.transactions },
+        { label: 'Dompet Dibuat', value: counts.wallets },
+        { label: 'Negara', value: counts.countries },
     ];
 
     return (
         <section
             id="stats"
             ref={ref}
-            className="bg-zinc-900 py-20 dark:bg-zinc-950"
+            className="bg-white py-20 dark:bg-zinc-950"
         >
-            <div className="mx-auto max-w-6xl px-5">
-                <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-                    {statsData.map((item, index) => {
-                        const Icon = item.icon;
+            <div className="mx-auto max-w-6xl px-6">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    viewport={{ once: true }}
+                    className="mx-auto mb-16 max-w-2xl text-center"
+                >
+                    <h2 className="mb-4 text-3xl font-bold text-zinc-900 dark:text-white">
+                        Pertumbuhan Kami dalam Angka
+                    </h2>
+                    <p className="text-zinc-600 dark:text-zinc-400">
+                        Kami bangga dengan angka-angka ini. Mereka berbicara
+                        tentang komitmen kami terhadap kualitas dan komunitas.
+                    </p>
+                </motion.div>
 
-                        return (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, scale: 0.85 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                transition={{
-                                    type: 'spring',
-                                    stiffness: 100,
-                                    damping: 15,
-                                    delay: index * 0.1,
-                                }}
-                                viewport={{ once: true }}
-                                className="rounded-xl border border-zinc-800 bg-zinc-900 p-5 text-center dark:border-zinc-800 dark:bg-zinc-900/50"
-                            >
-                                <Icon
-                                    className="mx-auto mb-2 h-4 w-4 text-zinc-500"
-                                    strokeWidth={2}
-                                />
-                                <p className="text-2xl font-semibold tracking-tight text-white">
-                                    {item.value.toLocaleString('id-ID')}+
-                                </p>
-                                <p className="mt-0.5 text-[11px] font-medium tracking-wide text-zinc-500 uppercase">
-                                    {item.label}
-                                </p>
-                            </motion.div>
-                        );
-                    })}
+                <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+                    {statsData.map((item, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{
+                                duration: 0.4,
+                                delay: index * 0.1,
+                            }}
+                            viewport={{ once: true }}
+                            className={`text-center lg:border-r lg:border-zinc-200 last:lg:border-r-0 dark:lg:border-zinc-800`}
+                        >
+                            <div className="mb-2 text-4xl font-bold text-black dark:text-white">
+                                {formatNumber(item.value)}+
+                            </div>
+                            <div className="text-sm font-medium tracking-wider text-zinc-500 uppercase dark:text-zinc-400">
+                                {item.label}
+                            </div>
+                        </motion.div>
+                    ))}
                 </div>
             </div>
         </section>
@@ -703,7 +836,16 @@ function Features({ features }: { features: Feature[] }) {
         target: ref,
         offset: ['start end', 'end start'],
     });
-    const y = useTransform(scrollYProgress, [0, 1], [20, -20]);
+    const y = useTransform(scrollYProgress, [0, 1], [30, -30]);
+
+    const iconColorMap: Record<string, string> = {
+        wallet: 'text-teal-500',
+        chart: 'text-blue-500',
+        category: 'text-purple-500',
+        secure: 'text-green-500',
+        report: 'text-amber-500',
+        mobile: 'text-rose-500',
+    };
 
     return (
         <section
@@ -711,63 +853,93 @@ function Features({ features }: { features: Feature[] }) {
             ref={ref}
             className="bg-white py-24 dark:bg-zinc-950"
         >
-            <div className="mx-auto max-w-6xl px-5">
-                <motion.div
-                    initial={{ opacity: 0, y: 20, filter: 'blur(4px)' }}
-                    whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    transition={{ duration: 0.5 }}
-                    viewport={{ once: true }}
-                    className="mb-14"
-                >
-                    <p className="text-xs font-medium tracking-widest text-zinc-400 uppercase">
-                        Fitur
-                    </p>
-                    <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-900 sm:text-3xl dark:text-white">
-                        Semua yang Anda butuhkan, tidak lebih tidak kurang
-                    </h2>
-                    <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
-                        Dibangun untuk kebutuhan pencatatan keuangan pribadi
-                        sehari-hari.
-                    </p>
-                </motion.div>
-
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {features.map((feature, index) => {
-                        const Icon = iconMap[feature.icon] || Wallet;
-
-                        return (
-                            <motion.div
-                                key={index}
-                                initial={{
-                                    opacity: 0,
-                                    y: 30,
-                                    filter: 'blur(5px)',
-                                }}
-                                whileInView={{
-                                    opacity: 1,
-                                    y: 0,
-                                    filter: 'blur(0px)',
-                                }}
-                                transition={{
-                                    duration: 0.5,
-                                    delay: index * 0.05,
-                                }}
+            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-16">
+                <div className="-mx-4 flex flex-wrap items-center lg:-mx-6">
+                    {/* Text Side */}
+                    <div className="order-1 w-full px-4 lg:order-0 lg:w-1/2 lg:px-6">
+                        <div className="w-full lg:max-w-md">
+                            <motion.h2
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5 }}
                                 viewport={{ once: true }}
-                                style={{ y }}
-                                className="rounded-xl border border-zinc-200 bg-white p-5 transition-colors hover:border-zinc-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700"
+                                className="mb-4 text-3xl leading-tight font-bold tracking-tight text-zinc-900 sm:text-4xl dark:text-white"
                             >
-                                <div className="mb-3 flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
-                                    <Icon className="h-4 w-4" strokeWidth={2} />
-                                </div>
-                                <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
-                                    {feature.title}
-                                </h3>
-                                <p className="mt-1 text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-400">
-                                    {feature.description}
-                                </p>
-                            </motion.div>
-                        );
-                    })}
+                                Semua yang Anda butuhkan untuk kelola keuangan!
+                            </motion.h2>
+                            <motion.p
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: 0.1 }}
+                                viewport={{ once: true }}
+                                className="mb-6 text-sm font-medium text-zinc-400 dark:text-zinc-500"
+                            >
+                                Dibangun untuk kebutuhan pencatatan keuangan
+                                pribadi sehari-hari. Fitur-fitur kami mencakup:
+                            </motion.p>
+                            <ul>
+                                {features.map((feature, index) => {
+                                    const Icon =
+                                        iconMap[feature.icon] || Wallet;
+                                    const colorClass =
+                                        iconColorMap[feature.icon] ||
+                                        'text-zinc-500';
+
+                                    return (
+                                        <motion.li
+                                            key={index}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            whileInView={{
+                                                opacity: 1,
+                                                x: 0,
+                                            }}
+                                            transition={{
+                                                duration: 0.4,
+                                                delay: 0.15 + index * 0.07,
+                                            }}
+                                            viewport={{ once: true }}
+                                            className="flex items-start gap-4 py-2.5 xl:py-3"
+                                        >
+                                            <div
+                                                className={`mt-0.5 shrink-0 ${colorClass}`}
+                                            >
+                                                <Icon
+                                                    className="h-7 w-7"
+                                                    strokeWidth={1.8}
+                                                />
+                                            </div>
+                                            <div>
+                                                <span className="text-sm font-medium text-zinc-600 dark:text-zinc-300">
+                                                    {feature.title}
+                                                </span>
+                                                <p className="mt-0.5 text-[13px] leading-relaxed text-zinc-400 dark:text-zinc-500">
+                                                    {feature.description}
+                                                </p>
+                                            </div>
+                                        </motion.li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    </div>
+
+                    {/* Image Side */}
+                    <div className="order-0 mb-12 w-full px-4 lg:order-1 lg:mb-0 lg:w-1/2 lg:px-6">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            viewport={{ once: true }}
+                            style={{ y }}
+                            className="mx-auto sm:max-w-sm lg:max-w-full"
+                        >
+                            <img
+                                src="https://cdn.devdojo.com/images/november2020/feature-graphic.png"
+                                alt="Finance Lux Features"
+                                className="w-full rounded-2xl"
+                            />
+                        </motion.div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -778,15 +950,15 @@ function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
     return (
         <section
             id="testimonials"
-            className="bg-zinc-50 py-24 dark:bg-zinc-900"
+            className="bg-zinc-50 px-4 py-16 sm:px-6 sm:py-20 dark:bg-zinc-900"
         >
-            <div className="mx-auto max-w-6xl px-5">
+            <div className="mx-auto max-w-3xl">
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
                     viewport={{ once: true }}
-                    className="mb-14"
+                    className="mb-12 sm:mb-16"
                 >
                     <p className="text-xs font-medium tracking-widest text-zinc-400 uppercase">
                         Testimoni
@@ -796,42 +968,41 @@ function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
                     </h2>
                 </motion.div>
 
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="space-y-10 sm:space-y-14">
                     {testimonials.map((testimonial, index) => (
                         <motion.div
                             key={index}
-                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                            transition={{ duration: 0.4, delay: index * 0.1 }}
+                            initial={{ opacity: 0, y: 24 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{
+                                duration: 0.5,
+                                delay: index * 0.12,
+                                ease: 'easeOut',
+                            }}
                             viewport={{ once: true }}
-                            className="rounded-md border border-dashed bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+                            className="relative pl-8 sm:pl-12"
                         >
+                            <div className="absolute top-0 left-0 text-4xl text-zinc-200 select-none sm:text-5xl dark:text-zinc-700">
+                                &ldquo;
+                            </div>
+                            <blockquote className="mb-3 text-lg leading-relaxed text-zinc-800 sm:mb-4 sm:text-xl dark:text-zinc-200">
+                                {testimonial.quote}
+                            </blockquote>
                             <div className="flex items-center gap-3">
                                 <img
                                     src={testimonial.avatar}
                                     alt={testimonial.name}
-                                    className="h-9 w-9 rounded-full object-cover"
+                                    className="h-8 w-8 rounded-full object-cover sm:h-10 sm:w-10"
                                 />
                                 <div>
-                                    <p className="text-sm font-medium text-zinc-900 dark:text-white">
+                                    <p className="text-sm font-semibold text-zinc-900 sm:text-base dark:text-white">
                                         {testimonial.name}
                                     </p>
-                                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                    <p className="text-xs text-zinc-500 sm:text-sm dark:text-zinc-400">
                                         {testimonial.role}
                                     </p>
                                 </div>
                             </div>
-                            <div className="mt-3 flex gap-0.5">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                    <Star
-                                        key={i}
-                                        className="h-3 w-3 fill-amber-400 text-amber-400"
-                                    />
-                                ))}
-                            </div>
-                            <p className="mt-3 text-[13px] leading-relaxed text-zinc-600 dark:text-zinc-400">
-                                &ldquo;{testimonial.quote}&rdquo;
-                            </p>
                         </motion.div>
                     ))}
                 </div>
@@ -840,41 +1011,53 @@ function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
     );
 }
 
-function FAQSection() {
+function FAQSection({ faqs }: { faqs: FAQ[] }) {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    const faqs: FAQ[] = [
-        {
-            question: 'Apa itu Finance Lux?',
-            answer: 'Finance Lux adalah aplikasi pencatatan keuangan pribadi. Anda bisa membuat beberapa dompet, mencatat transaksi, dan mengelompokkannya jadi kategori — semuanya diperbarui otomatis tanpa perlu hitung manual.',
-        },
-        {
-            question: 'Apakah Finance Lux gratis dipakai?',
-            answer: 'Ya, semua fitur inti (dompet, kategori, transaksi, dan ringkasan) gratis dipakai tanpa batas waktu.',
-        },
-        {
-            question: 'Bagaimana cara mulai pakai Finance Lux?',
-            answer: 'Buat akun, tambahkan dompet pertama Anda, lalu mulai catat transaksi. Saldo dan ringkasan akan otomatis terupdate setiap kali ada transaksi baru.',
-        },
-        {
-            question: 'Apakah data keuangan saya aman?',
-            answer: 'Data disimpan terenkripsi dan hanya bisa diakses lewat akun Anda sendiri. Kami tidak pernah membagikan data transaksi ke pihak ketiga.',
-        },
-        {
-            question: 'Bisa diakses dari HP?',
-            answer: 'Bisa. Tampilan Finance Lux menyesuaikan otomatis di HP, tablet, maupun desktop — tanpa perlu install aplikasi terpisah.',
-        },
-    ];
+    const calloutStyles: Record<CalloutType, string> = {
+        info: 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950/50 dark:border-blue-800 dark:text-blue-300',
+        success:
+            'bg-emerald-50 border-emerald-200 text-emerald-800 dark:bg-emerald-950/50 dark:border-emerald-800 dark:text-emerald-300',
+        warning:
+            'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950/50 dark:border-amber-800 dark:text-amber-300',
+        danger: 'bg-red-50 border-red-200 text-red-800 dark:bg-red-950/50 dark:border-red-800 dark:text-red-300',
+    };
+
+    const calloutIcons: Record<CalloutType, React.ElementType> = {
+        info: Info,
+        success: CheckCircle,
+        warning: AlertTriangle,
+        danger: AlertCircle,
+    };
+
+    const faqIconMap: Record<string, React.ElementType> = {
+        wallet: FaWallet,
+        chart: FaChartLine,
+        listchecks: FaListOl,
+        secure: FaShieldAlt,
+        mobile: FaMobileAlt,
+        report: FaFileAlt,
+        default: FaQuestion, 
+    };
+
+    const filteredFaqs = faqs.filter(
+        (faq) =>
+            faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            faq.answer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (faq.keywords &&
+                faq.keywords.toLowerCase().includes(searchQuery.toLowerCase())),
+    );
 
     return (
         <section id="faq" className="bg-white py-24 dark:bg-zinc-950">
-            <div className="mx-auto max-w-3xl px-5">
+            <div className="mx-auto max-w-5xl px-5">
                 <motion.div
-                    initial={{ opacity: 0, x: 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, ease: 'easeOut' }}
                     viewport={{ once: true }}
-                    className="mb-14"
+                    className="mb-10"
                 >
                     <p className="text-xs font-medium tracking-widest text-zinc-400 uppercase">
                         FAQ
@@ -884,50 +1067,126 @@ function FAQSection() {
                     </h2>
                 </motion.div>
 
-                <div className="divide-y divide-zinc-200 border-t border-b border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
-                    {faqs.map((faq, index) => {
-                        const isOpen = openIndex === index;
-
-                        return (
-                            <div key={index}>
-                                <button
-                                    onClick={() => {
-                                        setOpenIndex(isOpen ? null : index);
-                                    }}
-                                    className="flex w-full items-center justify-between py-4 text-left transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
-                                >
-                                    <span className="text-sm font-medium text-zinc-900 dark:text-white">
-                                        {faq.question}
-                                    </span>
-                                    <ChevronRight
-                                        className={`h-4 w-4 shrink-0 text-zinc-400 transition-transform duration-200 ${
-                                            isOpen ? 'rotate-90' : ''
-                                        }`}
-                                        strokeWidth={2}
-                                    />
-                                </button>
-                                <AnimatePresence>
-                                    {isOpen && (
-                                        <motion.div
-                                            initial={{ height: 0, opacity: 0 }}
-                                            animate={{
-                                                height: 'auto',
-                                                opacity: 1,
-                                            }}
-                                            exit={{ height: 0, opacity: 0 }}
-                                            transition={{ duration: 0.2 }}
-                                            className="overflow-hidden"
-                                        >
-                                            <p className="pb-4 text-[13px] leading-relaxed text-zinc-500 dark:text-zinc-400">
-                                                {faq.answer}
-                                            </p>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                        );
-                    })}
+                <div className="relative mb-10">
+                    <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-zinc-400" />
+                    <input
+                        type="text"
+                        placeholder="Cari pertanyaan..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full border border-zinc-200 bg-white py-3 pr-4 pl-12 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:placeholder:text-zinc-500"
+                    />
                 </div>
+
+                {filteredFaqs.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:items-start">
+                        {filteredFaqs.map((faq, index) => {
+                            const isOpen = openIndex === index;
+                            const Icon = faqIconMap[faq.icon] || faqIconMap.default;
+                            const CalloutIcon = faq.callout
+                                ? calloutIcons[faq.callout.type]
+                                : null;
+
+                            return (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{
+                                        duration: 0.4,
+                                        delay: index * 0.05,
+                                    }}
+                                    viewport={{ once: true }}
+                                    className={`overflow-hidden border border-dashed border-zinc-300 bg-white transition-shadow dark:border-zinc-700 dark:bg-zinc-900 ${
+                                        isOpen ? 'shadow-lg' : ''
+                                    }`}
+                                >
+                                    <button
+                                        onClick={() =>
+                                            setOpenIndex(isOpen ? null : index)
+                                        }
+                                        className="flex w-full items-center gap-3 bg-zinc-50 p-5 text-left transition-colors hover:bg-zinc-100 dark:bg-zinc-800/50 dark:hover:bg-zinc-800"
+                                    >
+                                        <Icon
+                                            className={`h-5 w-5 shrink-0 ${faq.iconColor}`}
+                                            strokeWidth={2}
+                                        />
+                                        <span className="flex-1 text-sm font-semibold text-zinc-900 dark:text-white">
+                                            {faq.question}
+                                        </span>
+                                        <ChevronRight
+                                            className={`h-4 w-4 shrink-0 text-zinc-400 transition-transform duration-200 ${
+                                                isOpen ? 'rotate-90' : ''
+                                            }`}
+                                            strokeWidth={2}
+                                        />
+                                    </button>
+                                    <AnimatePresence>
+                                        {isOpen && (
+                                            <motion.div
+                                                initial={{
+                                                    height: 0,
+                                                    opacity: 0,
+                                                }}
+                                                animate={{
+                                                    height: 'auto',
+                                                    opacity: 1,
+                                                }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="p-5 pt-3">
+                                                    <p className="mb-4 text-[13px] leading-relaxed text-zinc-600 dark:text-zinc-400">
+                                                        {faq.answer}
+                                                    </p>
+
+                                                    {faq.callout &&
+                                                        CalloutIcon && (
+                                                            <div
+                                                                className={`flex items-start gap-3 border p-4 ${calloutStyles[faq.callout.type]}`}
+                                                            >
+                                                                <CalloutIcon
+                                                                    className="mt-0.5 h-5 w-5 shrink-0"
+                                                                    strokeWidth={
+                                                                        2
+                                                                    }
+                                                                />
+                                                                <div>
+                                                                    <strong className="mb-1 block text-sm">
+                                                                        {
+                                                                            faq
+                                                                                .callout
+                                                                                .title
+                                                                        }
+                                                                    </strong>
+                                                                    <span className="text-xs opacity-90">
+                                                                        {
+                                                                            faq
+                                                                                .callout
+                                                                                .text
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </motion.div>
+                            );
+                        })}
+                    </div>
+                ) : (
+                    <div className="py-10 text-center text-sm text-zinc-500">
+                        Tidak ada pertanyaan yang cocok dengan pencarian "
+                        <span className="font-medium text-zinc-700 dark:text-zinc-300">
+                            {searchQuery}
+                        </span>
+                        "
+                    </div>
+                )}
             </div>
         </section>
     );
@@ -1066,7 +1325,7 @@ function ContactSection() {
                                         });
                                     }}
                                     placeholder="Nama kamu"
-                                    className="w-full rounded-lg border border-zinc-300 bg-white py-2.5 pl-10 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
+                                    className="w-full rounded-none! border border-zinc-300 bg-white py-2.5 pl-10 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
                                 />
                             </div>
                             {errors.name && (
@@ -1092,7 +1351,7 @@ function ContactSection() {
                                         });
                                     }}
                                     placeholder="nama@email.com"
-                                    className="w-full rounded-lg border border-zinc-300 bg-white py-2.5 pl-10 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
+                                    className="w-full rounded-none! border border-zinc-300 bg-white py-2.5 pl-10 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
                                 />
                             </div>
                             {errors.email && (
@@ -1121,7 +1380,7 @@ function ContactSection() {
                                         });
                                     }}
                                     placeholder="Ceritakan pertanyaan atau masukan kamu..."
-                                    className="w-full resize-none rounded-lg border border-zinc-300 bg-white py-2.5 pr-3 pl-10 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
+                                    className="w-full resize-none rounded-none! border border-zinc-300 bg-white py-2.5 pr-3 pl-10 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
                                 />
                             </div>
                             {errors.message && (
@@ -1134,7 +1393,7 @@ function ContactSection() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-none! bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
                         >
                             {isSubmitting ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -1160,9 +1419,9 @@ function ContactSection() {
                                         ease: 'easeOut',
                                     }}
                                     viewport={{ once: true }}
-                                    className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
+                                    className="flex items-center gap-3 rounded-xs border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
                                 >
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
                                         <Icon className="h-5 w-5" />
                                     </div>
                                     <div>
@@ -1222,11 +1481,12 @@ export default function Landing({
     features,
     testimonials,
     stats,
+    faqs,
 }: LandingProps) {
     useFlashToast();
 
     return (
-        <>
+        <div>
             <Head title="Kelola Uang Tanpa Drama" />
             <Navbar />
             <Hero />
@@ -1234,10 +1494,10 @@ export default function Landing({
             <HowItWorks />
             <Features features={features} />
             <Testimonials testimonials={testimonials} />
-            <FAQSection />
+            <FAQSection faqs={faqs} />
             <ContactSection />
             <Footer />
             <ScrollToTop />
-        </>
+        </div>
     );
 }

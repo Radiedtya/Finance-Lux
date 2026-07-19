@@ -145,3 +145,11 @@
         @apply bg-background text-foreground;
     }
 }
+html, body {
+    scrollbar-width: none; /* Untuk Firefox */
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none; /* Untuk Chrome, Safari, dan Edge */
+}
