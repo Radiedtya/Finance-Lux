@@ -540,9 +540,6 @@ export default function WalletsIndex() {
                             transition={{ delay: 0.2 }}
                             className="flex items-center gap-3 sm:justify-end"
                         >
-                            <div className="bg-blue-50 p-2 dark:bg-blue-950/50">
-                                <CreditCard className="h-4 w-4 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />
-                            </div>
                             <div>
                                 <p className="text-[11px] font-medium tracking-[0.2em] text-zinc-400 uppercase">
                                     Total Dompet
@@ -550,6 +547,9 @@ export default function WalletsIndex() {
                                 <p className="text-xl font-light tracking-tight text-zinc-900 dark:text-zinc-50">
                                     {totalWallets}
                                 </p>
+                            </div>
+                            <div className="bg-blue-50 p-2 dark:bg-blue-950/50">
+                                <CreditCard className="h-4 w-4 text-blue-600 dark:text-blue-400" strokeWidth={1.5} />
                             </div>
                         </motion.div>
                     </div>

@@ -214,7 +214,7 @@ function AnimatedBarChart({ data }: { data: ChartData[] }) {
         <div ref={chartRef} className="space-y-3">
             {data.map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
-                    <div className="min-w-[80px] truncate text-xs text-zinc-600 dark:text-zinc-400">
+                    <div className="min-w-20 truncate text-xs text-zinc-600 dark:text-zinc-400">
                         {item.category}
                     </div>
                     <div className="relative h-6 flex-1 overflow-hidden bg-zinc-100 dark:bg-zinc-800">
@@ -227,7 +227,7 @@ function AnimatedBarChart({ data }: { data: ChartData[] }) {
                             data-width={`${(item.total / maxValue) * 100}%`}
                         />
                     </div>
-                    <div className="min-w-[70px] text-right font-mono text-xs text-zinc-600 dark:text-zinc-400">
+                    <div className="min-w-17.5 text-right font-mono text-xs text-zinc-600 dark:text-zinc-400">
                         {formatRupiah(item.total)}
                     </div>
                 </div>

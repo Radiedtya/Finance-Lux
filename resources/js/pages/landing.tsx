@@ -27,6 +27,7 @@ import {
     LineChart,
     Wallet,
     User,
+    Mail,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { FaMapMarkedAlt, FaGithubAlt } from 'react-icons/fa';
@@ -395,7 +396,7 @@ function Hero() {
                     transition={{ duration: 0.6, delay: 0.1, ease: 'easeOut' }}
                     className="max-w-xl"
                 >
-                    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3.5 py-1 text-xs text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400">
+                    <div className="mb-6 inline-flex items-center gap-2 border-2 border-black bg-white px-1.5 py-1.5 text-xs font-extrabold text-black dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-200 dark:shadow-[0.1em_0.1em_0px_0px_rgba(255,255,255,0.15)]">
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                         Dipakai 15.000+ orang di Indonesia
                     </div>
@@ -803,7 +804,7 @@ function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
                             whileInView={{ opacity: 1, y: 0, scale: 1 }}
                             transition={{ duration: 0.4, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className="rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+                            className="rounded-md border border-dashed bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
                         >
                             <div className="flex items-center gap-3">
                                 <img
@@ -1044,21 +1045,30 @@ function ContactSection() {
                         transition={{ duration: 0.5, ease: 'easeOut' }}
                         viewport={{ once: true }}
                         onSubmit={handleSubmit}
-                        className="col-span-3 space-y-4"
+                        className="col-span-3 space-y-1.5"
                     >
-                        <div>
-                            <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                        <div className="w-full">
+                            <label className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
                                 Nama
                             </label>
-                            <input
-                                type="text"
-                                value={form.name}
-                                onChange={(e) => {
-                                    setForm({ ...form, name: e.target.value });
-                                }}
-                                placeholder="Nama kamu"
-                                className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
-                            />
+                            <div className="relative">
+                                <User
+                                    className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400"
+                                    strokeWidth={1.5}
+                                />
+                                <input
+                                    type="text"
+                                    value={form.name}
+                                    onChange={(e) => {
+                                        setForm({
+                                            ...form,
+                                            name: e.target.value,
+                                        });
+                                    }}
+                                    placeholder="Nama kamu"
+                                    className="w-full rounded-lg border border-zinc-300 bg-white py-2.5 pl-10 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
+                                />
+                            </div>
                             {errors.name && (
                                 <p className="mt-1 text-xs text-red-500">
                                     {errors.name}
@@ -1066,19 +1076,25 @@ function ContactSection() {
                             )}
                         </div>
 
-                        <div>
-                            <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                        <div className="w-full">
+                            <label className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
                                 Email
                             </label>
-                            <input
-                                type="email"
-                                value={form.email}
-                                onChange={(e) => {
-                                    setForm({ ...form, email: e.target.value });
-                                }}
-                                placeholder="nama@email.com"
-                                className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
-                            />
+                            <div className="relative">
+                                <SiGmail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+                                <input
+                                    type="email"
+                                    value={form.email}
+                                    onChange={(e) => {
+                                        setForm({
+                                            ...form,
+                                            email: e.target.value,
+                                        });
+                                    }}
+                                    placeholder="nama@email.com"
+                                    className="w-full rounded-lg border border-zinc-300 bg-white py-2.5 pl-10 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
+                                />
+                            </div>
                             {errors.email && (
                                 <p className="mt-1 text-xs text-red-500">
                                     {errors.email}
@@ -1086,22 +1102,28 @@ function ContactSection() {
                             )}
                         </div>
 
-                        <div>
-                            <label className="mb-1 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
+                        <div className="w-full">
+                            <label className="mb-1.5 block text-xs font-medium text-zinc-600 dark:text-zinc-400">
                                 Pesan
                             </label>
-                            <textarea
-                                rows={4}
-                                value={form.message}
-                                onChange={(e) => {
-                                    setForm({
-                                        ...form,
-                                        message: e.target.value,
-                                    });
-                                }}
-                                placeholder="Ceritakan pertanyaan atau masukan kamu..."
-                                className="w-full resize-none rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
-                            />
+                            <div className="relative">
+                                <Mail
+                                    className="pointer-events-none absolute top-3 left-3 h-4 w-4 text-zinc-400"
+                                    strokeWidth={1.5}
+                                />
+                                <textarea
+                                    rows={4}
+                                    value={form.message}
+                                    onChange={(e) => {
+                                        setForm({
+                                            ...form,
+                                            message: e.target.value,
+                                        });
+                                    }}
+                                    placeholder="Ceritakan pertanyaan atau masukan kamu..."
+                                    className="w-full resize-none rounded-lg border border-zinc-300 bg-white py-2.5 pr-3 pl-10 text-sm text-zinc-900 transition-colors outline-none placeholder:text-zinc-400 focus:border-zinc-900 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-100 dark:placeholder:text-zinc-500 dark:focus:border-zinc-500"
+                                />
+                            </div>
                             {errors.message && (
                                 <p className="mt-1 text-xs text-red-500">
                                     {errors.message}
@@ -1123,7 +1145,7 @@ function ContactSection() {
                         </button>
                     </motion.form>
 
-                    <div className="col-span-2 space-y-4">
+                    <div className="col-span-2 flex flex-col gap-4 pt-5">
                         {contactInfo.map((item, index) => {
                             const Icon = item.icon;
 
@@ -1140,11 +1162,8 @@ function ContactSection() {
                                     viewport={{ once: true }}
                                     className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
                                 >
-                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-                                        <Icon
-                                            className="h-4 w-4"
-                                            strokeWidth={2}
-                                        />
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                                        <Icon className="h-5 w-5" />
                                     </div>
                                     <div>
                                         <p className="text-[11px] font-medium tracking-wide text-zinc-400 uppercase">
@@ -1166,28 +1185,28 @@ function ContactSection() {
 
 function Footer() {
     return (
-        <footer className="border-t border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-            <div className="mx-auto flex max-w-6xl flex-col items-center px-8 py-8 sm:flex-row">
+        <footer className="border-t border-zinc-200 bg-white py-8 dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 sm:flex-row">
                 <Link
-                    href="#home"
+                    href="/"
                     className="text-xl leading-none font-black text-zinc-900 select-none dark:text-white"
                 >
                     <span className="flex items-center gap-2">
                         <img
                             src="/images/flx.png"
                             alt="FinanceLux"
-                            className="h-6 w-6 rounded-md object-contain"
+                            className="h-8 w-8 rounded-full object-contain"
                         />
-                        Finance<span className="text-indigo-600">Lux.</span>
+                        Finance<span className="text-indigo-600">Lux</span>
                     </span>
                 </Link>
-                <p className="mt-4 text-sm text-zinc-500 sm:mt-0 sm:ml-4 sm:border-l sm:border-zinc-200 sm:pl-4 dark:text-zinc-400 dark:sm:border-zinc-700">
-                    &copy; {new Date().getFullYear()} Finance Lux - All rights
+                <p className="text-xs text-zinc-400">
+                    &copy; {new Date().getFullYear()} FinanceLux All rights
                     reserved.
                 </p>
                 <span className="mt-4 inline-flex justify-center space-x-5 sm:mt-0 sm:ml-auto sm:justify-start">
                     <a
-                        href="https://github.com/Radiedtya/finance-lux"
+                        href="#"
                         className="text-zinc-400 transition-colors hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-300"
                     >
                         <span className="sr-only">GitHub</span>
@@ -1211,8 +1230,8 @@ export default function Landing({
             <Head title="Kelola Uang Tanpa Drama" />
             <Navbar />
             <Hero />
-            <HowItWorks />
             <StatsSection stats={stats} />
+            <HowItWorks />
             <Features features={features} />
             <Testimonials testimonials={testimonials} />
             <FAQSection />
