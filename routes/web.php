@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ContactController as AdminContactController;
 
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\ContactController;
@@ -50,6 +51,12 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'is_admin'])->group(func
         ->only(['index', 'update'])
         ->names([
             'index' => 'adminUsers',
+        ]);
+
+    Route::resource('messages', AdminContactController::class)
+        ->only(['index', 'destroy'])
+        ->names([
+            'index' => 'adminMessages',
         ]);
 });
 

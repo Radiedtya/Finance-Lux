@@ -7,6 +7,7 @@ import {
     Tags,
     Users,
     Wallet,
+    MessagesSquare,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -31,6 +32,7 @@ import {
     // Admin
     adminDashboard, 
     adminUsers,
+    adminMessages
 } from '@/routes';
 import type { NavItem } from '@/types';
 
@@ -50,7 +52,7 @@ const footerNavItems: NavItem[] = [
 
 const adminNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'Overview',
         href: adminDashboard(),
         icon: LayoutGrid,
     },
@@ -59,6 +61,11 @@ const adminNavItems: NavItem[] = [
         href: adminUsers(),
         icon: Users,
     },
+    {
+        title: 'Messages',
+        href: adminMessages(),
+        icon: MessagesSquare,
+    }
 ];
 
 const userNavItems: NavItem[] = [

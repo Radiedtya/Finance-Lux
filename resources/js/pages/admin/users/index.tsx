@@ -1,4 +1,5 @@
 import { Head, router, usePage } from '@inertiajs/react';
+import Chart from 'chart.js/auto';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
     ChevronLeft,
@@ -6,12 +7,12 @@ import {
     Search,
     ShieldCheck,
     ShieldOff,
-    UserCog,
 } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Swal from 'sweetalert2';
 import { Input } from '@/components/ui/input';
 import { SidebarInset } from '@/components/ui/sidebar';
+import { adminUsers } from '@/routes';
 
 type ManagedUser = {
     id: number;
@@ -32,6 +33,15 @@ type PaginatedResponse = {
 
 type UsersPageProps = {
     users: PaginatedResponse;
+    stats: {
+        total: number;
+        admin_count: number;
+        user_count: number;
+    };
+    chart: {
+        labels: string[];
+        data: number[];
+    };
     flash?: {
         success?: string;
     };
@@ -74,7 +84,8 @@ const rowVariants = {
 };
 
 export default function UsersIndex() {
-    const { users, flash } = usePage().props as unknown as UsersPageProps;
+    const { users, flash, stats, chart } = usePage()
+        .props as unknown as UsersPageProps;
 
     const url = new URL(usePage().url, window.location.origin);
     const initialSearch = url.searchParams.get('search') || '';
@@ -85,6 +96,11 @@ export default function UsersIndex() {
     const [showCursor, setShowCursor] = useState(true);
     const prevSearchRef = useRef(initialSearch);
 
+    // Ref untuk Chart
+    const chartRef = useRef<HTMLCanvasElement>(null);
+    const chartInstanceRef = useRef<Chart | null>(null);
+
+    // Typing Animation
     useEffect(() => {
         let index = 0;
         let cursorTimeout: ReturnType<typeof setTimeout>;
@@ -104,6 +120,100 @@ export default function UsersIndex() {
         };
     }, []);
 
+    // Chart Initialization
+    useEffect(() => {
+        if (!chartRef.current) {
+            return;
+        }
+
+        // Destroy chart lama jika ada (misal saat search/paginate, chart tidak hilang)
+        if (chartInstanceRef.current) {
+            chartInstanceRef.current.destroy();
+        }
+
+        const ctx = chartRef.current.getContext('2d');
+
+        if (!ctx) {
+            return;
+        }
+
+        const isDark = document.documentElement.classList.contains('dark');
+
+        chartInstanceRef.current = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chart.labels,
+                datasets: [
+                    {
+                        label: 'Pengguna Baru',
+                        data: chart.data,
+                        backgroundColor: '#4f46e5',
+                        hoverBackgroundColor: '#4338ca',
+                        borderRadius: 4,
+                        maxBarThickness: 32,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                // ---> TAMBAHKAN ANIMASI CUSTOM DI SINI <---
+                animation: {
+                    duration: 1500, // Durasi lebih lama agar mantulnya terasa
+                    easing: 'easeOutBounce', // Efek memantul (berbeda dari default easeOutQuart)
+                    delay: (context: any) => {
+                        let delay = 0;
+                        // Cek jika yang dianimasikan adalah data batangnya
+
+                        if (
+                            context.type === 'data' &&
+                            context.mode === 'default'
+                        ) {
+                            // Delay bertahap: batang pertama muncul duluan, dst
+                            delay =
+                                context.dataIndex * 250 +
+                                context.datasetIndex * 100;
+                        }
+
+                        return delay;
+                    },
+                },
+                // -------------------------------------------
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: (tooltipItem) =>
+                                `${tooltipItem.formattedValue} pengguna`,
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: isDark ? '#a1a1aa' : '#4b5563' },
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: isDark ? '#27272a' : '#e5e7eb' },
+                        ticks: { color: isDark ? '#a1a1aa' : '#4b5563' },
+                    },
+                },
+            },
+        });
+
+        return () => {
+            if (chartInstanceRef.current) {
+                chartInstanceRef.current.destroy();
+            }
+        };
+    }, [chart]);
+
+    // Flash Message
     useEffect(() => {
         if (flash?.success) {
             Swal.fire({
@@ -125,6 +235,7 @@ export default function UsersIndex() {
         }
     }, [flash?.success]);
 
+    // Search Logic
     useEffect(() => {
         const timer = setTimeout(() => {
             if (localSearch !== prevSearchRef.current) {
@@ -233,7 +344,7 @@ export default function UsersIndex() {
                     <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
                         {displayedTitle}
                         <span
-                            className={`ml-0.5 inline-block w-[2px] translate-y-[3px] bg-zinc-400 transition-opacity duration-300 ${
+                            className={`ml-0.5 inline-block w-0.5 translate-y-0.75 bg-zinc-400 transition-opacity duration-300 ${
                                 showCursor ? 'opacity-100' : 'opacity-0'
                             }`}
                             style={{ height: '1em' }}
@@ -249,17 +360,80 @@ export default function UsersIndex() {
                     </motion.p>
                 </motion.div>
 
+                {/* Grid Chart & Role Stats (Mengikuti Layout Referensi) */}
+                <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                    {/* Chart Canvas */}
+                    <div className="rounded-lg border border-zinc-200 bg-white p-6 lg:col-span-2 dark:border-zinc-800 dark:bg-zinc-900">
+                        <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                            Pengguna baru per bulan
+                        </h2>
+                        <div className="mt-4 h-64">
+                            <canvas
+                                ref={chartRef}
+                                role="img"
+                                aria-label="Bar chart menampilkan pengguna baru per bulan"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Stats by Role Card */}
+                    <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
+                        <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                            Pengguna berdasarkan role
+                        </h2>
+                        <ul className="mt-4 space-y-4">
+                            <li>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                                        Admin
+                                    </span>
+                                    <span className="text-zinc-500 dark:text-zinc-400">
+                                        {stats.admin_count}
+                                    </span>
+                                </div>
+                                <div className="mt-1.5 h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800">
+                                    <div
+                                        className="h-1.5 rounded-full bg-indigo-600 transition-all duration-500"
+                                        style={{
+                                            width: `${stats.total > 0 ? (stats.admin_count / stats.total) * 100 : 0}%`,
+                                        }}
+                                    />
+                                </div>
+                            </li>
+                            <li>
+                                <div className="flex items-center justify-between text-sm">
+                                    <span className="font-medium text-zinc-900 dark:text-zinc-100">
+                                        User
+                                    </span>
+                                    <span className="text-zinc-500 dark:text-zinc-400">
+                                        {stats.user_count}
+                                    </span>
+                                </div>
+                                <div className="mt-1.5 h-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800">
+                                    <div
+                                        className="h-1.5 rounded-full bg-zinc-400 transition-all duration-500 dark:bg-zinc-500"
+                                        style={{
+                                            width: `${stats.total > 0 ? (stats.user_count / stats.total) * 100 : 0}%`,
+                                        }}
+                                    />
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                {/* Main Card Table */}
                 <motion.div
                     variants={fadeUp}
                     initial="hidden"
                     animate="visible"
-                    className="rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900"
+                    className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
                 >
-                    <div className="flex flex-col gap-4 border-b border-zinc-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800">
-                        <p className="text-xs text-zinc-400 dark:text-zinc-500">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                             {users.total} pengguna
-                        </p>
-                        <div className="relative w-full sm:w-64">
+                        </h2>
+                        <div className="relative w-full sm:w-56">
                             <Search className="pointer-events-none absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
                             <Input
                                 value={localSearch}
@@ -270,20 +444,28 @@ export default function UsersIndex() {
                         </div>
                     </div>
 
-                    <div className="min-w-0 overflow-x-auto">
-                        <table className="w-full text-sm">
-                            <thead>
-                                <tr className="border-b border-zinc-100 text-left text-[11px] font-medium tracking-wider text-zinc-400 uppercase dark:border-zinc-800/60">
-                                    <th className="px-5 py-3">Pengguna</th>
-                                    <th className="px-5 py-3">Email</th>
-                                    <th className="px-5 py-3">Bergabung</th>
-                                    <th className="px-5 py-3">Role</th>
-                                    <th className="px-5 py-3 text-right">
+                    <div className="mt-4 min-w-0 overflow-x-auto">
+                        <table className="min-w-full divide-y-2 divide-zinc-200 dark:divide-zinc-700">
+                            <thead className="ltr:text-left rtl:text-right">
+                                <tr className="*:font-medium *:text-zinc-900 dark:*:text-zinc-100">
+                                    <th className="px-3 py-2 whitespace-nowrap">
+                                        Pengguna
+                                    </th>
+                                    <th className="px-3 py-2 whitespace-nowrap">
+                                        Email
+                                    </th>
+                                    <th className="px-3 py-2 whitespace-nowrap">
+                                        Bergabung
+                                    </th>
+                                    <th className="px-3 py-2 whitespace-nowrap">
+                                        Role
+                                    </th>
+                                    <th className="px-3 py-2 text-right whitespace-nowrap">
                                         Aksi
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
                                 <AnimatePresence mode="popLayout">
                                     {users.data.length === 0 ? (
                                         <motion.tr
@@ -294,12 +476,9 @@ export default function UsersIndex() {
                                         >
                                             <td
                                                 colSpan={5}
-                                                className="px-5 py-14 text-center"
+                                                className="px-3 py-6 text-center text-sm text-zinc-500"
                                             >
-                                                <p className="text-sm text-zinc-400">
-                                                    Tidak ada pengguna
-                                                    ditemukan.
-                                                </p>
+                                                Tidak ada pengguna ditemukan.
                                             </td>
                                         </motion.tr>
                                     ) : (
@@ -312,9 +491,9 @@ export default function UsersIndex() {
                                                 animate="visible"
                                                 exit="exit"
                                                 layout
-                                                className="border-b border-zinc-50 transition-colors last:border-0 hover:bg-zinc-50/60 dark:border-zinc-800/40 dark:hover:bg-zinc-800/20"
+                                                className="*:text-zinc-700 *:first:font-medium dark:*:text-zinc-300 dark:*:first:text-zinc-100"
                                             >
-                                                <td className="px-5 py-3">
+                                                <td className="px-3 py-2 whitespace-nowrap">
                                                     <div className="flex items-center gap-3">
                                                         {user.avatar ? (
                                                             <img
@@ -331,33 +510,31 @@ export default function UsersIndex() {
                                                                 )}
                                                             </div>
                                                         )}
-                                                        <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
+                                                        <span className="text-sm text-zinc-900 dark:text-zinc-100">
                                                             {user.name}
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td className="px-5 py-3 text-sm text-zinc-500 dark:text-zinc-400">
+                                                <td className="px-3 py-2 text-sm whitespace-nowrap">
                                                     {user.email}
                                                 </td>
-                                                <td className="px-5 py-3 text-sm text-zinc-500 dark:text-zinc-400">
+                                                <td className="px-3 py-2 text-sm whitespace-nowrap">
                                                     {formatDate(
                                                         user.created_at,
                                                     )}
                                                 </td>
-                                                <td className="px-5 py-3">
+                                                <td className="px-3 py-2 whitespace-nowrap">
                                                     {user.role === 'admin' ? (
-                                                        <span className="inline-flex items-center gap-1 rounded-md bg-zinc-900 px-2 py-0.5 text-[11px] font-medium text-zinc-50 dark:bg-zinc-100 dark:text-zinc-900">
-                                                            <ShieldCheck className="h-3 w-3" />
+                                                        <span className="rounded-full bg-zinc-900 px-2.5 py-0.5 text-xs font-medium text-zinc-50 dark:bg-zinc-100 dark:text-zinc-900">
                                                             Admin
                                                         </span>
                                                     ) : (
-                                                        <span className="inline-flex items-center gap-1 rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-                                                            <UserCog className="h-3 w-3" />
+                                                        <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
                                                             User
                                                         </span>
                                                     )}
                                                 </td>
-                                                <td className="px-5 py-3 text-right">
+                                                <td className="px-3 py-2 text-right whitespace-nowrap">
                                                     {user.role === 'admin' ? (
                                                         <button
                                                             type="button"
@@ -371,7 +548,7 @@ export default function UsersIndex() {
                                                                     'user',
                                                                 )
                                                             }
-                                                            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-2.5 py-1 text-[11px] font-medium text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                                                            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
                                                         >
                                                             {pendingId ===
                                                             user.id ? (
@@ -394,7 +571,7 @@ export default function UsersIndex() {
                                                                     'admin',
                                                                 )
                                                             }
-                                                            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-2.5 py-1 text-[11px] font-medium text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                                                            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
                                                         >
                                                             {pendingId ===
                                                             user.id ? (
@@ -415,8 +592,8 @@ export default function UsersIndex() {
                     </div>
 
                     {users.last_page > 1 && (
-                        <div className="flex items-center justify-between border-t border-zinc-100 px-5 py-3 dark:border-zinc-800/60">
-                            <p className="text-[11px] text-zinc-400">
+                        <div className="mt-4 flex items-center justify-between border-t border-zinc-200 pt-3 dark:border-zinc-800">
+                            <p className="text-xs text-zinc-500">
                                 Halaman {users.current_page} dari{' '}
                                 {users.last_page}
                             </p>
@@ -444,11 +621,7 @@ export default function UsersIndex() {
                                             key={page}
                                             type="button"
                                             onClick={() => goToPage(page)}
-                                            className={`flex h-7 w-7 items-center justify-center rounded-md text-[11px] font-medium transition-colors ${
-                                                page === users.current_page
-                                                    ? 'bg-zinc-900 text-zinc-50 dark:bg-zinc-100 dark:text-zinc-900'
-                                                    : 'border border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200'
-                                            }`}
+                                            className={`flex h-7 w-7 items-center justify-center rounded-md text-[11px] font-medium transition-colors ${page === users.current_page ? 'bg-zinc-900 text-zinc-50 dark:bg-zinc-100 dark:text-zinc-900' : 'border border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200'}`}
                                         >
                                             {page}
                                         </button>
@@ -479,7 +652,7 @@ UsersIndex.layout = {
     breadcrumbs: [
         {
             title: 'Admin | User Management',
-            href: '/admin/users',
+            href: adminUsers(),
         },
     ],
 };

@@ -1,4 +1,4 @@
-import { Head, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import {
     Users,
     Wallet,
@@ -19,9 +19,9 @@ import {
     ResponsiveContainer,
     PieChart,
     Pie,
-    Cell,
 } from 'recharts';
 import { SidebarInset } from '@/components/ui/sidebar';
+import { adminDashboard, adminMessages } from '@/routes';
 
 type MonthlyDataPoint = {
     name: string;
@@ -33,6 +33,12 @@ type DonutDataPoint = {
     name: string;
     value: number;
     color: string;
+};
+
+type RecentMessage = {
+    name: string;
+    message: string;
+    created_at: string;
 };
 
 type DashboardStats = {
@@ -48,6 +54,7 @@ type DashboardPageProps = {
     stats: DashboardStats;
     monthlyData: MonthlyDataPoint[];
     donutData: DonutDataPoint[];
+    recentMessages: RecentMessage[];
 };
 
 function GrowthBadge({ value }: { value: number }) {
@@ -116,7 +123,7 @@ function useAnimatedCounter(
 }
 
 export default function AdminDashboard() {
-    const { auth, stats, monthlyData, donutData } = usePage()
+    const { auth, stats, monthlyData, donutData, recentMessages } = usePage()
         .props as unknown as DashboardPageProps & { auth: any };
 
     const [typedText, setTypedText] = useState('');
@@ -247,7 +254,7 @@ export default function AdminDashboard() {
                                 user
                             </p>
                         </div>
-                        <div className="h-[300px] min-w-0 w-full">
+                        <div className="h-75 min-w-0 w-full">
                             <ResponsiveContainer
                                 width="100%"
                                 height="100%"
@@ -317,42 +324,37 @@ export default function AdminDashboard() {
                                 Distribusi kategori transaksi seluruh user
                             </p>
                         </div>
-                        <div className="flex h-[300px] min-w-0 w-full flex-col items-center justify-center">
+                        <div className="flex h-75 min-w-0 w-full flex-col items-center justify-center">
                             {donutData.length === 0 ? (
                                 <p className="text-sm text-zinc-400">
                                     Belum ada data transaksi pengeluaran
                                 </p>
                             ) : (
-                            <ResponsiveContainer
-                                width="100%"
-                                height="80%"
-                                debounce={150}
-                            >
-                                <PieChart>
-                                    <Pie
-                                        data={donutData}
-                                        cx="50%"
-                                        cy="50%"
-                                        innerRadius={60}
-                                        outerRadius={80}
-                                        paddingAngle={5}
-                                        dataKey="value"
-                                        isAnimationActive={false}
-                                    >
-                                        {donutData.map((entry, index) => (
-                                            <Cell
-                                                key={`cell-${index}`}
-                                                fill={entry.color}
-                                            />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip
-                                        formatter={(value: any) => [
-                                            `Rp ${Number(value).toLocaleString('id-ID')}`,
-                                        ]}
-                                    />
-                                </PieChart>
-                            </ResponsiveContainer>
+                                <ResponsiveContainer
+                                    width="100%"
+                                    height="80%"
+                                    debounce={150}
+                                >
+                                    <PieChart>
+                                        <Pie
+                                            data={donutData.map((entry) => ({
+                                                ...entry,
+                                                fill: entry.color,
+                                            }))}
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius={60}
+                                            outerRadius={80}
+                                            paddingAngle={5}
+                                            dataKey="value"
+                                        />
+                                        <Tooltip
+                                            formatter={(value: any) => [
+                                                `Rp ${Number(value).toLocaleString('id-ID')}`,
+                                            ]}
+                                        />
+                                    </PieChart>
+                                </ResponsiveContainer>
                             )}
                             <div className="mt-2 grid w-full grid-cols-2 gap-2 px-4 text-xs">
                                 {donutData.map((item, index) => (
@@ -361,7 +363,7 @@ export default function AdminDashboard() {
                                         className="flex items-center space-x-2"
                                     >
                                         <div
-                                            className="h-3 w-3 flex-shrink-0 rounded-full"
+                                            className="h-3 w-3 shrink-0 rounded-full"
                                             style={{
                                                 backgroundColor: item.color,
                                             }}
@@ -375,6 +377,67 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                 </div>
+
+                <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900">
+                    <div className="mb-4 flex items-center justify-between">
+                        <h2 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
+                            Pesan Masuk Terbaru
+                        </h2>
+                        <Link
+                            href={adminMessages()}
+                            className="flex items-center gap-1 text-xs font-medium text-emerald-600 hover:underline dark:text-emerald-400"
+                        >
+                            Lihat Semua
+                            <ArrowUpRight className="h-3 w-3" />
+                        </Link>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left text-sm">
+                            <thead>
+                                <tr className="border-b border-zinc-200 dark:border-zinc-800">
+                                    <th className="pb-3 text-xs font-medium tracking-wider text-zinc-500 uppercase">
+                                        Nama
+                                    </th>
+                                    <th className="pb-3 pl-4 text-xs font-medium tracking-wider text-zinc-500 uppercase">
+                                        Pesan
+                                    </th>
+                                    <th className="pb-3 pl-4 text-right text-xs font-medium tracking-wider text-zinc-500 uppercase">
+                                        Tanggal
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {recentMessages.length === 0 ? (
+                                    <tr>
+                                        <td
+                                            colSpan={3}
+                                            className="py-6 text-center text-sm text-zinc-400"
+                                        >
+                                            Belum ada pesan masuk.
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    recentMessages.map((msg, i) => (
+                                        <tr
+                                            key={i}
+                                            className="border-b border-zinc-100 last:border-0 dark:border-zinc-800/50"
+                                        >
+                                            <td className="py-3 whitespace-nowrap font-medium text-zinc-900 dark:text-zinc-100">
+                                                {msg.name}
+                                            </td>
+                                            <td className="max-w-xs truncate py-3 pl-4 text-zinc-600 dark:text-zinc-400">
+                                                {msg.message}
+                                            </td>
+                                            <td className="py-3 pl-4 text-right whitespace-nowrap text-zinc-500 dark:text-zinc-400">
+                                                {msg.created_at}
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </SidebarInset>
     );
@@ -384,7 +447,7 @@ AdminDashboard.layout = {
     breadcrumbs: [
         {
             title: 'Admin | Dashboard',
-            href: '/admin/dashboard',
+            href: adminDashboard(),
         },
     ],
 };

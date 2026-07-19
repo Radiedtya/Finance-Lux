@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\Wallet;
+use App\Models\ContactMessage;
+
 use Carbon\Carbon;
 use Inertia\Inertia;
 
@@ -34,6 +36,11 @@ class DashboardController extends Controller
             ],
             'monthlyData' => $this->monthlyCashFlow(),
             'donutData' => $this->topExpenseCategories(),
+            'recentMessages' => ContactMessage::latest()->take(3)->get()->map(fn ($msg) => [
+                'name' => $msg->name,
+                'message' => $msg->message,
+                'created_at' => $msg->created_at->translatedFormat('d M Y'),
+            ]),
         ]);
     }
 
