@@ -87,20 +87,29 @@ export default function UsersIndex() {
     const { users, flash, stats, chart } = usePage()
         .props as unknown as UsersPageProps;
 
-    const url = new URL(usePage().url, window.location.origin);
-    const initialSearch = url.searchParams.get('search') || '';
-
-    const [localSearch, setLocalSearch] = useState(initialSearch);
+    const [localSearch, setLocalSearch] = useState('');
     const [pendingId, setPendingId] = useState<number | null>(null);
     const [displayedTitle, setDisplayedTitle] = useState('');
     const [showCursor, setShowCursor] = useState(true);
-    const prevSearchRef = useRef(initialSearch);
 
-    // Ref untuk Chart
     const chartRef = useRef<HTMLCanvasElement>(null);
     const chartInstanceRef = useRef<Chart | null>(null);
 
-    // Typing Animation
+    const filteredUsers = useMemo(() => {
+
+        if (!localSearch.trim()) {
+            return users.data;
+        }
+        
+        const q = localSearch.toLowerCase().trim();
+
+        return users.data.filter(
+            (user) =>
+                user.name.toLowerCase().includes(q) ||
+                user.email.toLowerCase().includes(q),
+        );
+    }, [users.data, localSearch]);
+
     useEffect(() => {
         let index = 0;
         let cursorTimeout: ReturnType<typeof setTimeout>;
@@ -120,13 +129,11 @@ export default function UsersIndex() {
         };
     }, []);
 
-    // Chart Initialization
     useEffect(() => {
         if (!chartRef.current) {
             return;
         }
 
-        // Destroy chart lama jika ada (misal saat search/paginate, chart tidak hilang)
         if (chartInstanceRef.current) {
             chartInstanceRef.current.destroy();
         }
@@ -161,19 +168,16 @@ export default function UsersIndex() {
                     mode: 'index',
                     intersect: false,
                 },
-                // ---> TAMBAHKAN ANIMASI CUSTOM DI SINI <---
                 animation: {
-                    duration: 1500, // Durasi lebih lama agar mantulnya terasa
-                    easing: 'easeOutBounce', // Efek memantul (berbeda dari default easeOutQuart)
+                    duration: 1500,
+                    easing: 'easeOutBounce',
                     delay: (context: any) => {
                         let delay = 0;
-                        // Cek jika yang dianimasikan adalah data batangnya
 
                         if (
                             context.type === 'data' &&
                             context.mode === 'default'
                         ) {
-                            // Delay bertahap: batang pertama muncul duluan, dst
                             delay =
                                 context.dataIndex * 250 +
                                 context.datasetIndex * 100;
@@ -182,7 +186,6 @@ export default function UsersIndex() {
                         return delay;
                     },
                 },
-                // -------------------------------------------
                 plugins: {
                     legend: { display: false },
                     tooltip: {
@@ -213,7 +216,6 @@ export default function UsersIndex() {
         };
     }, [chart]);
 
-    // Flash Message
     useEffect(() => {
         if (flash?.success) {
             Swal.fire({
@@ -234,22 +236,6 @@ export default function UsersIndex() {
             });
         }
     }, [flash?.success]);
-
-    // Search Logic
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (localSearch !== prevSearchRef.current) {
-                prevSearchRef.current = localSearch;
-                router.get(
-                    '/admin/users',
-                    { search: localSearch || undefined, page: 1 },
-                    { preserveState: true, preserveScroll: true },
-                );
-            }
-        }, 300);
-
-        return () => clearTimeout(timer);
-    }, [localSearch]);
 
     const pageNumbers = useMemo(() => {
         const pages: (number | string)[] = [];
@@ -292,7 +278,7 @@ export default function UsersIndex() {
 
         router.get(
             '/admin/users',
-            { search: localSearch || undefined, page },
+            { page },
             { preserveState: true, preserveScroll: true },
         );
     };
@@ -360,9 +346,7 @@ export default function UsersIndex() {
                     </motion.p>
                 </motion.div>
 
-                {/* Grid Chart & Role Stats (Mengikuti Layout Referensi) */}
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-                    {/* Chart Canvas */}
                     <div className="rounded-lg border border-zinc-200 bg-white p-6 lg:col-span-2 dark:border-zinc-800 dark:bg-zinc-900">
                         <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                             Pengguna baru per bulan
@@ -376,7 +360,6 @@ export default function UsersIndex() {
                         </div>
                     </div>
 
-                    {/* Stats by Role Card */}
                     <div className="rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
                         <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
                             Pengguna berdasarkan role
@@ -422,7 +405,6 @@ export default function UsersIndex() {
                     </div>
                 </div>
 
-                {/* Main Card Table */}
                 <motion.div
                     variants={fadeUp}
                     initial="hidden"
@@ -431,7 +413,9 @@ export default function UsersIndex() {
                 >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                            {users.total} pengguna
+                            {localSearch.trim()
+                                ? `${filteredUsers.length} dari ${users.total} pengguna`
+                                : `${users.total} pengguna`}
                         </h2>
                         <div className="relative w-full sm:w-56">
                             <Search className="pointer-events-none absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
@@ -467,7 +451,7 @@ export default function UsersIndex() {
                             </thead>
                             <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
                                 <AnimatePresence mode="popLayout">
-                                    {users.data.length === 0 ? (
+                                    {filteredUsers.length === 0 ? (
                                         <motion.tr
                                             key="empty"
                                             initial={{ opacity: 0 }}
@@ -482,7 +466,7 @@ export default function UsersIndex() {
                                             </td>
                                         </motion.tr>
                                     ) : (
-                                        users.data.map((user, i) => (
+                                        filteredUsers.map((user, i) => (
                                             <motion.tr
                                                 key={user.id}
                                                 custom={i}
@@ -591,7 +575,7 @@ export default function UsersIndex() {
                         </table>
                     </div>
 
-                    {users.last_page > 1 && (
+                    {!localSearch.trim() && users.last_page > 1 && (
                         <div className="mt-4 flex items-center justify-between border-t border-zinc-200 pt-3 dark:border-zinc-800">
                             <p className="text-xs text-zinc-500">
                                 Halaman {users.current_page} dari{' '}

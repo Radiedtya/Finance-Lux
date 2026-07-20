@@ -385,7 +385,7 @@ function Navbar() {
                                     href={login()}
                                     className="rounded-full bg-zinc-900 px-3.5 py-1 text-[11px] font-medium text-white transition-colors hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100"
                                 >
-                                    Coba Gratis
+                                    Daftar Gratis
                                 </Link>
                             </>
                         )}
