@@ -552,7 +552,7 @@ export default function TransactionsIndex() {
                         <button
                             type="button"
                             onClick={handleCreate}
-                            className="inline-flex shrink-0 items-center gap-2.5 bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white transition-all hover:translate-y-[-1px] hover:bg-zinc-800 active:translate-y-0 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                            className="inline-flex shrink-0 items-center gap-2.5 bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white transition-all hover:translate-y-px hover:bg-zinc-800 active:translate-y-0 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
                         >
                             <Plus className="h-4 w-4" strokeWidth={1.5} />
                             Tambah Transaksi

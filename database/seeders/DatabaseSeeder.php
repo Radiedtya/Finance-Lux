@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
         // 1. Buat Akun Super Admin
         User::factory()->create([
             'name' => 'Super Admin',
-            'email' => 'admin@financelux.com',
+            'email' => 'admin@flx.com',
             'role' => 'admin',
             'password' => Hash::make('admin123'),
         ]);
@@ -28,14 +28,14 @@ class DatabaseSeeder extends Seeder
         // 2. Buat Akun User Biasa untuk Testing Fitur Finansial
         $user = User::factory()->create([
             'name' => 'Ryn',
-            'email' => 'ryn@financelux.com',
+            'email' => 'ryn@flx.com',
             'role' => 'user',
             'password' => Hash::make('password'),
         ]);
 
         $user = User::factory()->create([
             'name' => 'Radiedtya',
-            'email' => 'rad@financelux.com',
+            'email' => 'rad@flx.com',
             'role' => 'user',
             'password' => Hash::make('password'),
         ]);

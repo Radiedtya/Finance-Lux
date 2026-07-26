@@ -410,7 +410,7 @@ export default function MessagesIndex() {
                                                 <td className="px-3 py-2 text-sm max-w-xs truncate">
                                                     {msg.message}
                                                 </td>
-                                                <td className="px-3 py-2 whitespace-nowrap text-sm">
+                                                <td className="px-3 py-2 whitespace-nowrap text-sm font-extrabold">
                                                     {formatDate(msg.created_at)}
                                                 </td>
                                                 <td className="px-3 py-2 text-right whitespace-nowrap">

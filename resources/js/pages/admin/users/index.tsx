@@ -1,6 +1,6 @@
 import { Head, router, usePage } from '@inertiajs/react';
 import Chart from 'chart.js/auto';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
     ChevronLeft,
     ChevronRight,
@@ -100,15 +100,17 @@ export default function UsersIndex() {
         if (!localSearch.trim()) {
             return users.data;
         }
-        
-        const q = localSearch.toLowerCase().trim();
 
+        const q = localSearch.toLowerCase().trim();
+        
         return users.data.filter(
             (user) =>
                 user.name.toLowerCase().includes(q) ||
                 user.email.toLowerCase().includes(q),
         );
     }, [users.data, localSearch]);
+
+    const isSearching = localSearch.trim().length > 0;
 
     useEffect(() => {
         let index = 0;
@@ -413,7 +415,7 @@ export default function UsersIndex() {
                 >
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <h2 className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
-                            {localSearch.trim()
+                            {isSearching
                                 ? `${filteredUsers.length} dari ${users.total} pengguna`
                                 : `${users.total} pengguna`}
                         </h2>
@@ -450,23 +452,114 @@ export default function UsersIndex() {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                                <AnimatePresence mode="popLayout">
-                                    {filteredUsers.length === 0 ? (
-                                        <motion.tr
-                                            key="empty"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
+                                {filteredUsers.length === 0 ? (
+                                    <tr>
+                                        <td
+                                            colSpan={5}
+                                            className="px-3 py-6 text-center text-sm text-zinc-500"
                                         >
-                                            <td
-                                                colSpan={5}
-                                                className="px-3 py-6 text-center text-sm text-zinc-500"
+                                            Tidak ada pengguna ditemukan.
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredUsers.map((user, i) =>
+                                        isSearching ? (
+                                            <tr
+                                                key={user.id}
+                                                className="*:text-zinc-700 *:first:font-medium dark:*:text-zinc-300 dark:*:first:text-zinc-100"
                                             >
-                                                Tidak ada pengguna ditemukan.
-                                            </td>
-                                        </motion.tr>
-                                    ) : (
-                                        filteredUsers.map((user, i) => (
+                                                <td className="px-3 py-2 whitespace-nowrap">
+                                                    <div className="flex items-center gap-3">
+                                                        {user.avatar ? (
+                                                            <img
+                                                                src={
+                                                                    user.avatar
+                                                                }
+                                                                alt={user.name}
+                                                                className="h-8 w-8 rounded-full object-cover"
+                                                            />
+                                                        ) : (
+                                                            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 text-[11px] font-medium text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                                                                {initials(
+                                                                    user.name,
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                        <span className="text-sm text-zinc-900 dark:text-zinc-100">
+                                                            {user.name}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-3 py-2 text-sm whitespace-nowrap">
+                                                    {user.email}
+                                                </td>
+                                                <td className="px-3 py-2 text-sm whitespace-nowrap">
+                                                    {formatDate(
+                                                        user.created_at,
+                                                    )}
+                                                </td>
+                                                <td className="px-3 py-2 whitespace-nowrap">
+                                                    {user.role === 'admin' ? (
+                                                        <span className="rounded-full bg-zinc-900 px-2.5 py-0.5 text-xs font-medium text-zinc-50 dark:bg-zinc-100 dark:text-zinc-900">
+                                                            Admin
+                                                        </span>
+                                                    ) : (
+                                                        <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                                                            User
+                                                        </span>
+                                                    )}
+                                                </td>
+                                                <td className="px-3 py-2 text-right whitespace-nowrap">
+                                                    {user.role === 'admin' ? (
+                                                        <button
+                                                            type="button"
+                                                            disabled={
+                                                                pendingId ===
+                                                                user.id
+                                                            }
+                                                            onClick={() =>
+                                                                handleRoleChange(
+                                                                    user,
+                                                                    'user',
+                                                                )
+                                                            }
+                                                            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                                                        >
+                                                            {pendingId ===
+                                                            user.id ? (
+                                                                <span className="inline-block h-3 w-3 animate-spin rounded-full border border-zinc-300 border-t-zinc-600 dark:border-zinc-600 dark:border-t-zinc-300" />
+                                                            ) : (
+                                                                <ShieldOff className="h-3 w-3" />
+                                                            )}
+                                                            Jadikan User
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            disabled={
+                                                                pendingId ===
+                                                                user.id
+                                                            }
+                                                            onClick={() =>
+                                                                handleRoleChange(
+                                                                    user,
+                                                                    'admin',
+                                                                )
+                                                            }
+                                                            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-2 py-0.5 text-[11px] font-medium text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-700 disabled:opacity-40 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600 dark:hover:text-zinc-200"
+                                                        >
+                                                            {pendingId ===
+                                                            user.id ? (
+                                                                <span className="inline-block h-3 w-3 animate-spin rounded-full border border-zinc-300 border-t-zinc-600 dark:border-zinc-600 dark:border-t-zinc-300" />
+                                                            ) : (
+                                                                <ShieldCheck className="h-3 w-3" />
+                                                            )}
+                                                            Jadikan Admin
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ) : (
                                             <motion.tr
                                                 key={user.id}
                                                 custom={i}
@@ -568,14 +661,14 @@ export default function UsersIndex() {
                                                     )}
                                                 </td>
                                             </motion.tr>
-                                        ))
-                                    )}
-                                </AnimatePresence>
+                                        ),
+                                    )
+                                )}
                             </tbody>
                         </table>
                     </div>
 
-                    {!localSearch.trim() && users.last_page > 1 && (
+                    {!isSearching && users.last_page > 1 && (
                         <div className="mt-4 flex items-center justify-between border-t border-zinc-200 pt-3 dark:border-zinc-800">
                             <p className="text-xs text-zinc-500">
                                 Halaman {users.current_page} dari{' '}
