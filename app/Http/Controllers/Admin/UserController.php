@@ -35,6 +35,17 @@ class UserController extends Controller
             ->pluck('count', 'month_key')
             ->toArray();
 
+        // Sqlite
+        // ✅ SQLite compatible
+        // $chartData = User::where('id', '!=', auth()->id())
+        //     ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
+        //     ->selectRaw("strftime('%Y-%m', created_at) as month_key, COUNT(*) as count")
+        //     ->groupByRaw("strftime('%Y-%m', created_at)")
+        //     ->orderByRaw("strftime('%Y-%m', created_at) ASC")
+        //     ->get()
+        //     ->pluck('count', 'month_key')
+        //     ->toArray();
+
         $labels = [];
         $data = [];
         for ($i = 5; $i >= 0; $i--) {
